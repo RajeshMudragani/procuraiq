@@ -7,6 +7,7 @@ import { HealthModule } from './modules/health/health.module';
 import { AppLoggerModule } from './core/logging/logger.module';
 import { RequestContextMiddleware } from './middleware/request-context.middleware';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { TenantModule } from './modules/tenant/tenant.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     PrismaModule,
     HealthModule,
     AppLoggerModule,
+    TenantModule,
   ],
 })
 

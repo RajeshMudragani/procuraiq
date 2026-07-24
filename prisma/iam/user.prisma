@@ -1,0 +1,32 @@
+model User {
+    id String @id @default(uuid())
+
+    tenantId String
+    tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+    email String
+
+    firstName String
+    lastName  String
+
+    isActive Boolean @default(true)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy String?
+    updatedBy String?
+
+    isDeleted Boolean @default(false)
+
+    deletedAt DateTime?
+    deletedBy String?
+
+    version Int @default(1)
+
+    roles UserRole[]
+
+    @@unique([tenantId, email])
+    @@index([tenantId])
+    @@map("users")
+}

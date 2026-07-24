@@ -1,0 +1,14 @@
+model UserRole {
+    userId String
+    roleId String
+
+    user User @relation(fields: [userId], references: [id])
+    role Role @relation(fields: [roleId], references: [id])
+
+    assignedAt DateTime @default(now())
+
+    @@id([userId, roleId])
+    @@index([userId])
+    @@index([roleId])
+    @@map("user_roles")
+}
