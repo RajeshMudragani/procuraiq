@@ -1,22 +1,21 @@
-
 model OutboxEvent {
-    id String @id @default(uuid())
+  id String @id @default(uuid())
 
-    eventType String
+  eventType String
 
-    aggregateType String
-    aggregateId   String
+  aggregateType String
+  aggregateId   String
 
-    payload Json
+  payload Json
 
-    processed Boolean @default(false)
+  processed Boolean @default(false)
 
-    processedAt DateTime?
+  processedAt DateTime?
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
-    @@index([processed])
-    @@index([eventType])
-    @@index([processed, createdAt])
-    @@map("outbox_events")
+  @@index([processed])
+  @@index([eventType])
+  @@index([processed, createdAt])
+  @@map("outbox_events")
 }

@@ -1,23 +1,23 @@
 model AuditLog {
-    id String @id @default(uuid())
+  id String @id @default(uuid())
 
-    tenantId String?
-    userId   String?
+  tenantId String?
+  userId   String?
 
-    entityName String
-    entityId   String
+  entityName String
+  entityId   String
 
-    action String
+  action String
 
-    oldData Json?
-    newData Json?
+  oldData Json?
+  newData Json?
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
-    @@index([tenantId])
-    @@index([userId])
-    @@index([entityName])
-    @@index([entityId])
-    @@index([entityName, entityId])
-    @@map("audit_logs")
+  @@index([tenantId])
+  @@index([userId])
+  @@index([entityName])
+  @@index([entityId])
+  @@index([entityName, entityId])
+  @@map("audit_logs")
 }

@@ -3,11 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import configuration from './core/config/configuration';
 import { envSchema } from './core/config/env.schema';
 import { PrismaModule } from './core/database/prisma.module';
-import { HealthModule } from './modules/health/health.module';
 import { AppLoggerModule } from './core/logging/logger.module';
 import { RequestContextMiddleware } from './middleware/request-context.middleware';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { TenantModule } from './modules/tenant/tenant.module';
+import { ModulesModule } from './modules/index';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -29,9 +29,11 @@ import { TenantModule } from './modules/tenant/tenant.module';
     ]),
 
     PrismaModule,
-    HealthModule,
     AppLoggerModule,
-    TenantModule,
+
+    ModulesModule,
+
+    AuthModule,
   ],
 })
 

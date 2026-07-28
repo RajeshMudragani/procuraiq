@@ -1,26 +1,26 @@
 model Role {
-    id String @id @default(uuid())
+  id String @id @default(uuid())
 
-    name String @unique
+  name String @unique
 
-    description String?
+  description String?
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    createdBy String?
-    updatedBy String?
+  createdBy String?
+  updatedBy String?
 
-    isDeleted Boolean @default(false)
+  isDeleted Boolean @default(false)
 
-    deletedAt DateTime?
-    deletedBy String?
+  deletedAt DateTime?
+  deletedBy String?
 
-    version Int @default(1)
+  version Int @default(1)
 
-    users UserRole[]
+  users UserRole[]
 
-    permissions RolePermission[]
+  permissions RolePermission[]
 
-    @@map("roles")
+  @@map("roles")
 }

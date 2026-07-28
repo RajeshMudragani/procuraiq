@@ -27,35 +27,43 @@ async function seedRoles() {
 async function seedPermissions() {
   const permissions = [
     {
-      name: 'tenant.create',
+      code: 'tenant.create',
+      name: 'Create Tenant',
       description: 'Create tenant',
     },
     {
-      name: 'tenant.read',
+      code: 'tenant.read',
+      name: 'Read Tenant',
       description: 'Read tenant',
     },
     {
-      name: 'tenant.update',
+      code: 'tenant.update',
+      name: 'Update Tenant',
       description: 'Update tenant',
     },
     {
-      name: 'tenant.delete',
+      code: 'tenant.delete',
+      name: 'Delete Tenant',
       description: 'Delete tenant',
     },
     {
-      name: 'user.create',
+      code: 'user.create',
+      name: 'Create User',
       description: 'Create user',
     },
     {
-      name: 'user.read',
+      code: 'user.read',
+      name: 'Read User',
       description: 'Read user',
     },
     {
-      name: 'user.update',
+      code: 'user.update',
+      name: 'Update User',
       description: 'Update user',
     },
     {
-      name: 'user.delete',
+      code: 'user.delete',
+      name: 'Delete User',
       description: 'Delete user',
     },
   ];
@@ -63,10 +71,17 @@ async function seedPermissions() {
   for (const permission of permissions) {
     await prisma.permission.upsert({
       where: {
-        name: permission.name,
+        code: permission.code,
       },
+
       update: {},
-      create: permission,
+
+      create: {
+        code: permission.code,
+        name: permission.name,
+        description:
+          permission.description,
+      },
     });
   }
 }
@@ -149,7 +164,7 @@ async function seedRolePermissions() {
         [
           'tenant.read',
           'user.read',
-        ].includes(permission.name),
+        ].includes(permission.code),
       );
 
     for (const permission of viewerPermissions) {

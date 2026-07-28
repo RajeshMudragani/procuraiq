@@ -1,11 +1,18 @@
 model Permission {
-    id String @id @default(uuid())
+  id String @id @default(uuid())
 
-    name String @unique
+  code String @unique
 
-    description String?
+  name String
 
-    roles RolePermission[]
+  description String?
 
-    @@map("permissions")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  roles RolePermission[]
+
+  @@index([code])
+
+  @@map("permissions")
 }
