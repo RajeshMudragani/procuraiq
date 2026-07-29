@@ -8,6 +8,7 @@ import { PrismaModule } from './core/database/prisma.module';
 import { AppLoggerModule } from './core/logging/logger.module';
 import { RequestContextMiddleware } from './core/middleware/request-context.middleware';
 import { ModulesModule } from './modules';
+import { EventsModule } from './core/events/events.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ModulesModule } from './modules';
     PrismaModule,
     AppLoggerModule,
     ModulesModule,
+    EventsModule,
   ],
 
   providers: [

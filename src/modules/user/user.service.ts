@@ -4,12 +4,19 @@ import { TenantRepository } from '../tenant/tenant.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
+import { EventsService } from '../../core/events/events.service';
+import { RoutingKeys } from '../../core/events/contracts/common/routing-keys';
+import { UserCreatedEvent } from '../../core/events/contracts/user/user-created.event';
+import { EventTypes } from '../../core/events/contracts/common/event-types';
+
+
 @Injectable()
 export class UserService {
     constructor(
         private readonly userRepository: UserRepository,
-
         private readonly tenantRepository: TenantRepository,
+        private readonly eventsService: EventsService,
     ) {}
 
     async createUser(
@@ -43,7 +50,7 @@ export class UserService {
             12,
         );
 
-        return this.userRepository.create({
+        const user = await this.userRepository.create({
             tenant: {
                 connect: {
                     id: dto.tenantId,
@@ -54,6 +61,27 @@ export class UserService {
             lastName: dto.lastName.trim(),
             passwordHash,
         });
+
+        const event = new UserCreatedEvent();
+
+        event.eventId = randomUUID();
+        event.eventType = EventTypes.USER_CREATED;
+        event.occurredAt = new Date();
+
+        event.tenantId = user.tenantId;
+        event.userId = user.id;
+        event.email = user.email;
+
+        event.firstName = user.firstName;
+        event.lastName = user.lastName;
+        event.isActive = user.isActive;
+
+        await this.eventsService.publish(
+            RoutingKeys.USER_CREATED,
+            event,
+        );
+
+        return user;
     }
 
     async getUser(
