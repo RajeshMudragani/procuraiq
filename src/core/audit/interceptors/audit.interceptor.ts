@@ -10,7 +10,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { AuditService } from '../audit.service';
 import {AUDIT_KEY, AuditMetadata } from '../decorators/audit.decorator';
-import { DateUtil } from '../../../shared/utils/date.util';
+import { DateUtil } from '../../../common/utils/date.util';
 
 @Injectable()
 export class AuditInterceptor

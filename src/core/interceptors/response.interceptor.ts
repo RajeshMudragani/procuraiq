@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequestContextService } from '../logging/request-context.service';
-import { DateUtil } from '../../shared/utils/date.util';
+import { DateUtil } from '../../common/utils/date.util';
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T, any> {

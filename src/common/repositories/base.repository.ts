@@ -3,7 +3,7 @@ import { PrismaService } from '../../core/database/prisma.service';
 import {
   PaginationOptions,
   PaginationResult,
-} from './pagination.types';
+} from '../types/pagination.types';
 
 export abstract class BaseRepository {
     constructor(

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../../core/database/prisma.service';
-import { BaseRepository } from '../../common/base/base.repository';
-import { PaginationOptions, PaginationResult } from '../../common/base/pagination.types';
+import { BaseRepository } from '../../common/repositories/base.repository';
+import { PaginationOptions, PaginationResult } from '../../common/types/pagination.types';
 
 @Injectable()
 export class UserRepository extends BaseRepository {

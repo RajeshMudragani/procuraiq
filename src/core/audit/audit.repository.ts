@@ -5,7 +5,7 @@ import {
   Prisma,
 } from '@prisma/client';
 
-import { PrismaService } from '../../core/database/prisma.service';
+import { PrismaService } from '../database/prisma.service';
 
 @Injectable()
 export class AuditRepository {

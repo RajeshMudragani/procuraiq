@@ -14,7 +14,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { PaginationDto } from '../../common/base/dto/pagination.dto';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 
 import { PermissionService } from './permission.service';
 

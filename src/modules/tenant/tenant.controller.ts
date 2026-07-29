@@ -13,7 +13,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TenantService } from './tenant.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
-import { PaginationDto } from '../../common/base/dto/pagination.dto';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 
 @ApiTags('Tenants')
 @Controller({

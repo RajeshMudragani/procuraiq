@@ -8,7 +8,7 @@ import {
 import { Request, Response } from 'express';
 import { AppException } from '../exceptions/app.exception';
 import { RequestContextService } from '../logging/request-context.service';
-import { DateUtil } from '../../shared/utils/date.util';
+import { DateUtil } from '../../common/utils/date.util';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {

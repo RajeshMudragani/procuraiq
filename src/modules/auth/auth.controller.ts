@@ -19,7 +19,7 @@ import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { LoginRateLimit, RefreshRateLimit } from '../rate-limit/decorators/rate-limit.decorator';
+import { LoginRateLimit, RefreshRateLimit } from '../../core/rate-limit/decorators/rate-limit.decorator';
 
 @ApiTags('Authentication')
 @Controller('auth')

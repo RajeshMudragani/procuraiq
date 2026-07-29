@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Cached } from '../cache/decorators/cached.decorator';
-import { PaginationDto } from '../../common/base/dto/pagination.dto';
+import { Cached } from '../../core/cache/decorators/cached.decorator';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';

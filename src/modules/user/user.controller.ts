@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { PaginationDto } from '../../common/base/dto/pagination.dto';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';

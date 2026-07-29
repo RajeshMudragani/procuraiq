@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 
 import { Reflector } from '@nestjs/core';
-import { PrismaService } from '../../../core/database/prisma.service';
+import { PrismaService } from '../../database/prisma.service';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 
 @Injectable()

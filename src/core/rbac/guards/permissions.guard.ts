@@ -6,7 +6,7 @@ import {
 
 import { Reflector } from '@nestjs/core';
 
-import { PrismaService } from '../../../core/database/prisma.service';
+import { PrismaService } from '../../database/prisma.service';
 
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
 
