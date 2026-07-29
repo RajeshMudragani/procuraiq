@@ -1,0 +1,79 @@
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+} from '@nestjs/common';
+
+import { Reflector } from '@nestjs/core';
+
+import { PrismaService } from '../../../core/database/prisma.service';
+
+import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
+
+@Injectable()
+export class PermissionsGuard
+    implements CanActivate
+{
+    constructor(
+        private readonly reflector: Reflector,
+        private readonly prisma: PrismaService,
+    ) {}
+
+    async canActivate(
+        context: ExecutionContext,
+    ): Promise<boolean> {
+        const requiredPermissions =
+        this.reflector.getAllAndOverride<
+            string[]
+        >(
+            PERMISSIONS_KEY,
+            [
+                context.getHandler(),
+                context.getClass(),
+            ],
+        );
+
+        if ( !requiredPermissions || requiredPermissions.length === 0 ) {
+            return true;
+        }
+
+        const request = context.switchToHttp().getRequest();
+
+        const user = request.user;
+
+        if (!user) {
+            return false;
+        }
+
+        const userRoles = await this.prisma.userRole.findMany({
+            where: {
+                userId: user.userId,
+            },
+
+            include: {
+                role: {
+                    include: {
+                        permissions: {
+                            include: {
+                                permission: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        const userPermissions = userRoles.flatMap((userRole) =>
+            userRole.role.permissions.map(
+            (rolePermission) =>
+                rolePermission.permission.code,
+            ),
+        );
+
+        return requiredPermissions.every((permission) =>
+            userPermissions.includes(
+                permission,
+            ),
+        );
+    }
+}

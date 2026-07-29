@@ -11,7 +11,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
   @ApiProperty({
-    example: 'bf1fcc1b-ea4c-4feb-8904-7579b89751c8',
+    example: 'e356b2f4-c726-4835-9e2a-db359fb6ec26',
     description: 'Tenant identifier',
     format: 'uuid',
   })

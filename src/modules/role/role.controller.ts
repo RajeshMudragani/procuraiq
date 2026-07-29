@@ -9,16 +9,10 @@ import {
   Query,
 } from '@nestjs/common';
 
-import {
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Cached } from '../cache/decorators/cached.decorator';
 import { PaginationDto } from '../../common/base/dto/pagination.dto';
-
 import { RoleService } from './role.service';
-
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 
@@ -56,6 +50,7 @@ export class RoleController {
     }
 
     @Get()
+    @Cached('roles:list')
     @ApiOperation({
         summary: 'Get roles',
     })

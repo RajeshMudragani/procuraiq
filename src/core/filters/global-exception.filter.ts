@@ -86,7 +86,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             requestId: requestContext?.requestId,
             correlationId: requestContext?.correlationId,
             path: request.url,
-            timestamp: DateUtil.toDateOnly(new Date()),
+            timestamp: DateUtil.toIsoString(new Date()),
         };
     }
 }
