@@ -1,15 +1,16 @@
 import {
-  Injectable,
-  Logger,
-  OnModuleInit,
+    Injectable,
+    Logger,
+    OnApplicationBootstrap,
 } from '@nestjs/common';
 
 import { RabbitMqService } from '../rabbitmq.service';
 import { QueueNames } from '../contracts/common/queue-names';
+import { AuditHandler } from '../handlers/audit.handler';
 
 @Injectable()
 export class AuditConsumer
-    implements OnModuleInit
+    implements OnApplicationBootstrap
 {
     private readonly logger =
         new Logger(
@@ -18,10 +19,13 @@ export class AuditConsumer
 
     constructor(
         private readonly rabbitMqService: RabbitMqService,
+        private readonly auditHandler: AuditHandler,
     ) {}
 
-    async onModuleInit() {
-        const channel = this.rabbitMqService.getChannel();
+    async onApplicationBootstrap() {
+        this.logger.log(
+            'Starting Audit Consumer...',
+        );
 
         await this.rabbitMqService.assertQueue(
             QueueNames.AUDIT,
@@ -32,21 +36,22 @@ export class AuditConsumer
             '#',
         );
 
-        await channel.consume(
+        await this.rabbitMqService.consume(
             QueueNames.AUDIT,
-            async (message) => {
-                if (!message) {
-                    return;
-                }
 
-                const payload = JSON.parse(message.content.toString());
+            async (payload) => {
+                this.logger.log(
+                    'Audit event received',
+                );
 
-                this.logger.log(`Audit Event Received`);
-
-                console.log(payload);
-
-                channel.ack(message);
+                await this.auditHandler.handle(
+                    payload,
+                );
             },
+        );
+
+        this.logger.log(
+            'Audit consumer started',
         );
     }
 }

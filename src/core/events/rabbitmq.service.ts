@@ -69,6 +69,12 @@ export class RabbitMqService
     }
 
     getChannel(): amqp.Channel {
+        if (!this.channel) {
+            throw new Error(
+                'RabbitMQ channel not initialized',
+            );
+        }
+
         return this.channel;
     }
 
@@ -98,4 +104,44 @@ export class RabbitMqService
         );
     }
 
+    async consume(
+        queueName: string,
+        handler: (
+            payload: unknown,
+        ) => Promise<void>,
+    ) {
+        await this.channel.consume(
+            queueName,
+
+            async (msg) => {
+                if (!msg) {
+                    return;
+                }
+
+                try {
+                    const payload = JSON.parse(
+                        msg.content.toString(),
+                    );
+
+                    await handler(
+                        payload,
+                    );
+
+                    this.channel.ack(
+                        msg,
+                    );
+                } catch (error) {
+                    this.logger.error(
+                        error,
+                    );
+
+                    this.channel.nack(
+                        msg,
+                        false,
+                        true,
+                    );
+                }
+            },
+        );
+    }
 }
