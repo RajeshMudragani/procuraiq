@@ -1,16 +1,25 @@
 import { Module } from '@nestjs/common';
-import { JobProducer } from './producers/job.producer';
 import { JobsService } from './jobs.service';
+import { JobProducer } from './producers/job.producer';
+import { OutboxModule } from '../outbox/outbox.module';
+import { EventsModule } from '../events/events.module';
+import { OutboxProcessor } from './processors/outbox.processor';
 
 @Module({
+    imports: [
+        OutboxModule,
+        EventsModule,
+    ],
+
     providers: [
-        JobProducer,
         JobsService,
+        JobProducer,
+        OutboxProcessor,
     ],
 
     exports: [
-        JobProducer,
         JobsService,
-    ]
+        OutboxProcessor,
+  ],
 })
 export class JobsModule {}

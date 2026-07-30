@@ -10,13 +10,13 @@ export class EventsService {
     ) {}
 
     async publish(
-        routingKey:
-        (typeof RoutingKeys)[keyof typeof RoutingKeys],
-        event: BaseEvent,
-    ): Promise<void> {
+        routingKey: (typeof RoutingKeys)[keyof typeof RoutingKeys],
+        payload: unknown,
+    ): Promise<void>
+    {
         await this.publisher.publish(
             routingKey,
-            event,
+            payload,
         );
     }
 }

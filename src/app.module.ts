@@ -9,6 +9,7 @@ import { AppLoggerModule } from './core/logging/logger.module';
 import { RequestContextMiddleware } from './core/middleware/request-context.middleware';
 import { ModulesModule } from './modules';
 import { EventsModule } from './core/events/events.module';
+import { JobsModule } from './core/jobs/jobs.module';
 
 @Module({
   imports: [
@@ -32,6 +33,8 @@ import { EventsModule } from './core/events/events.module';
     AppLoggerModule,
     ModulesModule,
     EventsModule,
+    JobsModule,
+
   ],
 
   providers: [

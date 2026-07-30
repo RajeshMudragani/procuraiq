@@ -9,6 +9,8 @@ import { EventsService } from '../../core/events/events.service';
 import { RoutingKeys } from '../../core/events/contracts/common/routing-keys';
 import { UserCreatedEvent } from '../../core/events/contracts/user/user-created.event';
 import { EventTypes } from '../../core/events/contracts/common/event-types';
+import { OutboxService } from '../../core/outbox/outbox.service';
+import { JobsService } from '../../core/jobs/jobs.service';
 
 
 @Injectable()
@@ -16,7 +18,9 @@ export class UserService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly tenantRepository: TenantRepository,
-        private readonly eventsService: EventsService,
+
+        private readonly outboxService: OutboxService,
+        private readonly jobsService: JobsService,
     ) {}
 
     async createUser(
@@ -76,9 +80,16 @@ export class UserService {
         event.lastName = user.lastName;
         event.isActive = user.isActive;
 
-        await this.eventsService.publish(
-            RoutingKeys.USER_CREATED,
-            event,
+        const outboxEvent =
+            await this.outboxService.createMessage(
+                EventTypes.USER_CREATED,
+                'User',
+                user.id,
+                event,
+            );
+
+        await this.jobsService.enqueueOutboxEvent(
+            outboxEvent.id,
         );
 
         return user;

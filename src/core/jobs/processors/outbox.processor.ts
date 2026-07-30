@@ -1,45 +1,84 @@
 import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+} from '@nestjs/common';
+
+import {
   Job,
   Worker,
 } from 'bullmq';
 
-import { Logger } from '@nestjs/common';
+import { OutboxService } from '../../outbox/outbox.service';
+import { EventsService } from '../../events/events.service';
+import { EventRoutingMap } from '../../events/contracts/common/event-routing-map';
+import { EventTypes } from '../../events/contracts/common/event-types';
 
-const logger = new Logger(
-  'OutboxProcessor',
-);
+@Injectable()
+export class OutboxProcessor
+  implements OnModuleInit
+{
+  private readonly logger =
+    new Logger(
+      OutboxProcessor.name,
+    );
 
-export const outboxWorker =
-  new Worker(
-    'outbox',
+  constructor(
+    private readonly outboxService: OutboxService,
+    private readonly eventsService: EventsService,
+  ) {}
 
-    async (job: Job) => {
-      logger.log(
-        `Processing job ${job.id}`,
-      );
+  onModuleInit() {
 
-      const {
-        outboxEventId,
-      } = job.data;
+    new Worker(
+      'outbox',
 
-      logger.log(
-        `Outbox event: ${outboxEventId}`,
-      );
+      async (job: Job) => {
 
-      /**
-       * Tomorrow:
-       *
-       * 1. Read OutboxEvent
-       * 2. Publish RabbitMQ Event
-       * 3. Mark processed=true
-       * 4. Set processedAt
-       */
-    },
+        const {
+          outboxEventId,
+        } = job.data;
 
-    {
-      connection: {
-        host: process.env.REDIS_HOST ?? 'localhost',
-        port: Number(process.env.REDIS_PORT ?? 6379),
+        const outboxEvent = await this.outboxService.findById(
+          outboxEventId,
+        );
+
+        if (!outboxEvent) {
+          return;
+        }
+
+        if (
+          outboxEvent.processed
+        ) {
+          return;
+        }
+
+        const eventType = outboxEvent.eventType as EventTypes;
+
+        const routingKey = EventRoutingMap[eventType];
+
+        await this.eventsService.publish(
+          routingKey,
+          outboxEvent.payload,
+        );
+
+        await this.outboxService.markProcessed(
+          outboxEvent.id,
+        );
       },
-   },
-);
+
+      {
+        connection: {
+          host:
+            process.env.REDIS_HOST ??
+            'localhost',
+
+          port: Number(
+            process.env.REDIS_PORT ??
+            6379,
+          ),
+        },
+      },
+    );
+  }
+}

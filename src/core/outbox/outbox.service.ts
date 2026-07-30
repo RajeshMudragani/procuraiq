@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { OutboxRepository } from './outbox.repository';
 
-import { OutboxStatus } from './constants/outbox.constants';
-
 @Injectable()
 export class OutboxService {
     constructor(
@@ -25,7 +23,20 @@ export class OutboxService {
         });
     }
 
-    async getPendingMessages() {
-        return this.repository.findPending();
+    async findById(
+        id: string,
+    ) {
+        return this.repository.findById(
+            id,
+        );
+    }
+
+    async markProcessed(
+        id: string,
+    ) {
+        return this.repository.update(id, {
+            processed: true,
+            processedAt: new Date(),
+        });
     }
 }

@@ -16,6 +16,16 @@ export class OutboxRepository {
         });
     }
 
+    async findById(
+        id: string,
+    ) {
+        return this.prisma.outboxEvent.findUnique({
+            where: {
+                id,
+            },
+        });
+    }
+
     findPending() {
         return this.prisma.outboxEvent.findMany({
             where: {

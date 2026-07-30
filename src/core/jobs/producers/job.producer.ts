@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
 import { QueueFactory } from '../queues/queue.factory';
-
 import { QueueNames } from '../queues/queue-names';
 
 @Injectable()
