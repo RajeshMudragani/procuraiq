@@ -11,6 +11,7 @@ import { ModulesModule } from './modules';
 import { EventsModule } from './core/events/events.module';
 import { JobsModule } from './core/jobs/jobs.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
@@ -29,6 +30,16 @@ import { NotificationModule } from './modules/notification/notification.module';
         limit: 100,
       },
     ]),
+
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST ?? 'localhost',
+        port: Number(
+          process.env.REDIS_PORT ??
+          6379,
+        ),
+      },
+    }),
 
     PrismaModule,
     AppLoggerModule,

@@ -3,12 +3,14 @@ import { Prisma } from '@prisma/client';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { CreateSystemNotificationDto } from './dto/create-system-notification.dto';
 import { NotificationRepository } from './notification.repository';
+import { EmailQueueService } from './jobs/email.queue.service';
+import { NotificationChannel } from './enums/notification-channel.enum';
 
 @Injectable()
 export class NotificationService {
     constructor(
-        private readonly repository:
-            NotificationRepository,
+        private readonly repository: NotificationRepository,
+        private readonly emailQueueService: EmailQueueService,
     ) {}
 
     createNotification(
@@ -25,10 +27,10 @@ export class NotificationService {
         });
     }
 
-    createSystemNotification(
+    async createSystemNotification(
         dto: CreateSystemNotificationDto,
     ) {
-        return this.repository.create({
+        const notification = await this.repository.create({
             tenantId: dto.tenantId,
             userId: dto.userId,
             type: dto.type,
@@ -37,6 +39,22 @@ export class NotificationService {
             message: dto.message,
             metadata: dto.metadata as Prisma.InputJsonValue,
         });
+
+        const email = (dto.metadata as any)?.email;
+        if (
+            email &&
+            (
+                dto.channel === NotificationChannel.EMAIL ||
+                dto.channel === NotificationChannel.BOTH
+            )
+        ) {
+            await this.emailQueueService.enqueue({
+                to: email,
+                subject: notification.title,
+                html: notification.message,
+            });
+        }
+        return notification;
     }
 
     getNotifications(

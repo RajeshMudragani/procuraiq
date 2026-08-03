@@ -16,15 +16,6 @@ export class AuditHandler {
         payload: any,
     ): Promise<void> {
 
-        console.log(
-            'AUDIT PAYLOAD:',
-            JSON.stringify(
-                payload,
-                null,
-                2,
-            ),
-        );
-
         this.logger.log(
             `Handling audit event: ${payload?.eventType}`,
         );

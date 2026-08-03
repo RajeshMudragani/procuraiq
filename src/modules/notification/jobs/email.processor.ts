@@ -1,24 +1,31 @@
 import {
-    Injectable,
-    Logger,
-} from '@nestjs/common';
+    Processor,
+    WorkerHost,
+} from '@nestjs/bullmq';
+import { Job } from 'bullmq';
+import { EmailService } from '../email/email.service';
+import { EMAIL_QUEUE } from './email.constants';
 
-@Injectable()
-export class EmailProcessor {
-    private readonly logger =
-        new Logger(
-            EmailProcessor.name,
-        );
+@Processor(
+    EMAIL_QUEUE,
+)
+export class EmailProcessor
+    extends WorkerHost
+{
+    constructor(
+        private readonly emailService:
+            EmailService,
+    ) {
+        super();
+    }
 
     async process(
-        payload: unknown,
+        job: Job,
     ) {
-        this.logger.log(
-            'Email job received',
-        );
-
-        this.logger.debug(
-            JSON.stringify(payload),
+        await this.emailService.send(
+            job.data.to,
+            job.data.subject,
+            job.data.html,
         );
     }
 }
