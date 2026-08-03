@@ -22,6 +22,8 @@ import { PurchaseOrderItemModule } from './purchase-order-item/purchase-order-it
 import { RfqSupplierModule } from './rfq-supplier/rfq-supplier.module';
 import { QuotationModule } from './quotation/quotation.module';
 import { QuotationItemModule } from './quotation-item/quotation-item.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { ApprovalModule } from './approval/approval.module';
 
 @Module({
     imports: [
@@ -52,6 +54,10 @@ import { QuotationItemModule } from './quotation-item/quotation-item.module';
 
         QuotationModule,
         QuotationItemModule,
+
+        DashboardModule,
+
+        ApprovalModule,
     ],
 })
 

@@ -1,0 +1,21 @@
+model ApprovalStep {
+  id String @id @default(uuid())
+
+  approvalId String
+
+  stepNumber Int
+
+  approverId String
+
+  status ApprovalStatus @default(PENDING)
+
+  comments String?
+
+  actionAt DateTime?
+
+  approval Approval @relation(fields: [approvalId], references: [id], onDelete: Cascade)
+
+  @@index([approvalId])
+
+  @@map("approval_steps")
+}

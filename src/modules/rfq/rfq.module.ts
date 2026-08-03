@@ -21,6 +21,7 @@ import { RfqService } from './rfq.service';
     ],
 
     exports: [
+        RfqRepository,
         RfqService,
     ],
 })

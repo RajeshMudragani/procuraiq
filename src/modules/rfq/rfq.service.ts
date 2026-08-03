@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -15,14 +16,9 @@ import { RfqResponseDto } from './dto/rfq-response.dto';
 @Injectable()
 export class RfqService {
     constructor(
-        private readonly repository:
-            RfqRepository,
-
-        private readonly rfqItemService:
-            RfqItemService,
-
-        private readonly eventsService:
-            EventsService,
+        private readonly repository: RfqRepository,
+        private readonly rfqItemService: RfqItemService,
+        private readonly eventsService: EventsService,
     ) {}
 
     async create(
@@ -117,14 +113,33 @@ export class RfqService {
         );
     }
 
-    publish(
+    async publish(
         id: string,
     ) {
+
+        const rfq = await this.repository.findById(
+            id,
+        );
+
+        if (!rfq) {
+            throw new NotFoundException(
+                'RFQ not found',
+            );
+        }
+
+        if (
+            rfq.status !==
+            RfqStatus.DRAFT
+        ) {
+            throw new BadRequestException(
+                'Only draft RFQs can be published',
+            );
+        }
+
         return this.repository.update(
             id,
             {
-                status:
-                    RfqStatus.PUBLISHED,
+                status: RfqStatus.PUBLISHED,
             },
         );
     }
@@ -135,8 +150,7 @@ export class RfqService {
         return this.repository.update(
             id,
             {
-                status:
-                    RfqStatus.CLOSED,
+                status: RfqStatus.CLOSED,
             },
         );
     }
@@ -147,8 +161,7 @@ export class RfqService {
         return this.repository.update(
             id,
             {
-                status:
-                    RfqStatus.CANCELLED,
+                status: RfqStatus.CANCELLED,
             },
         );
     }

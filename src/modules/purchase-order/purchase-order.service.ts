@@ -1,11 +1,13 @@
 import {
+    BadRequestException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { PurchaseOrderStatus } from '@prisma/client';
 import { PurchaseOrderRepository } from './purchase-order.repository';
 import { PurchaseOrderItemService } from '../purchase-order-item/purchase-order-item.service';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
+import { AwardStatus, PurchaseOrderStatus } from '@prisma/client';
+import { AwardRepository } from '../award/award.repository';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -13,12 +15,31 @@ export class PurchaseOrderService {
     constructor(
         private readonly repository: PurchaseOrderRepository,
         private readonly itemService: PurchaseOrderItemService,
+        private readonly awardRepository: AwardRepository,
     ) {}
 
     async create(
         dto: CreatePurchaseOrderDto,
     ) {
 
+        const award = await this.awardRepository.findById(
+            dto.awardId,
+        );
+
+        if (!award) {
+            throw new NotFoundException(
+                'Award not found',
+            );
+        }
+
+        if (
+            award.status !==
+            AwardStatus.AWARDED
+        ) {
+            throw new BadRequestException(
+                'Award must be awarded before creating a purchase order',
+            );
+        }
         const po = await this.repository.create({
                 awardId: dto.awardId,
                 supplierId: dto.supplierId,
@@ -45,6 +66,9 @@ export class PurchaseOrderService {
             0,
         );
 
+        console.log(
+            'PO Total Amount:', totalAmount,
+        );
         await this.repository.update(
             po.id,
             {
@@ -52,7 +76,7 @@ export class PurchaseOrderService {
             },
         );
 
-        return this.findById(
+        return await this.findById(
             po.id,
         );
     }
@@ -107,9 +131,29 @@ export class PurchaseOrderService {
         return this.repository.findAll();
     }
 
-    issue(
+    async issue(
         id: string,
     ) {
+
+        const po = await this.repository.findById(
+            id,
+        );
+
+        if (!po) {
+            throw new NotFoundException(
+                'Purchase Order not found',
+            );
+        }
+
+        if (
+            po.status !==
+            PurchaseOrderStatus.DRAFT
+        ) {
+            throw new BadRequestException(
+                'Purchase Order has already been issued',
+            );
+        }
+
         return this.repository.update(
             id,
             {

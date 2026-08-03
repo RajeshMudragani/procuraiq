@@ -1,14 +1,16 @@
 import {
+    BadRequestException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
 
-import { QuotationStatus } from '@prisma/client';
+import { QuotationStatus, RfqStatus } from '@prisma/client';
 import { QuotationRepository } from './quotation.repository';
 import { QuotationItemService } from '../quotation-item/quotation-item.service';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
 import { EventsService } from '../../core/events/events.service';
 import { QuotationResponseDto } from './dto/quotation-response.dto';
+import { RfqRepository } from '../rfq/rfq.repository';
 
 @Injectable()
 export class QuotationService {
@@ -16,19 +18,40 @@ export class QuotationService {
     constructor(
         private readonly repository: QuotationRepository,
         private readonly quotationItemService: QuotationItemService,
+        private readonly rfqRepository: RfqRepository,
     ) {}
 
     async create(
         dto: CreateQuotationDto,
     ) {
 
-        const quotation = await this.repository.create({
-            rfqId: dto.rfqId,
-            supplierId: dto.supplierId,
-            quotationNumber: `QT-${Date.now()}`,
-            status: QuotationStatus.DRAFT,
-            remarks: dto.remarks,
-        });
+        const rfq = await this.rfqRepository.findById(
+                dto.rfqId,
+            );
+
+        if (!rfq) {
+            throw new NotFoundException(
+                'RFQ not found',
+            );
+        }
+
+        if (
+            rfq.status !==
+            RfqStatus.PUBLISHED
+        ) {
+            throw new BadRequestException(
+                'RFQ must be published before accepting quotations',
+            );
+        }
+
+        const quotation =
+            await this.repository.create({
+                rfqId: dto.rfqId,
+                supplierId: dto.supplierId,
+                quotationNumber: `QT-${Date.now()}`,
+                status: QuotationStatus.DRAFT,
+                remarks: dto.remarks,
+            });
 
         await this.quotationItemService.createMany(
             quotation.id,

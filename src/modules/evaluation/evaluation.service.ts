@@ -1,27 +1,53 @@
 import {
+    BadRequestException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
 
-import { EvaluationStatus } from '@prisma/client';
+import { EvaluationStatus, QuotationStatus } from '@prisma/client';
 import { EvaluationRepository } from './evaluation.repository';
 import { EvaluationItemService } from '../evaluation-item/evaluation-item.service';
 import { CreateEvaluationDto } from './dto/create-evaluation.dto';
+import { QuotationRepository } from '../quotation/quotation.repository';
 
 @Injectable()
 export class EvaluationService {
 
     constructor(
-        private readonly repository:
-            EvaluationRepository,
-
-        private readonly itemService:
-            EvaluationItemService,
+        private readonly repository: EvaluationRepository,
+        private readonly itemService: EvaluationItemService,
+        private readonly quotationRepository: QuotationRepository,
     ) {}
 
     async create(
         dto: CreateEvaluationDto,
     ) {
+
+        for (
+            const item
+            of dto.items
+        ) {
+
+            const quotation =
+                await this.quotationRepository.findById(
+                    item.quotationId,
+                );
+
+            if (!quotation) {
+                throw new NotFoundException(
+                    'Quotation not found',
+                );
+            }
+
+            if (
+                quotation.status !==
+                QuotationStatus.SUBMITTED
+            ) {
+                throw new BadRequestException(
+                    'Quotation must be submitted before evaluation',
+                );
+            }
+        }
 
         const evaluation =
             await this.repository.create({
@@ -78,14 +104,33 @@ export class EvaluationService {
         return this.repository.findAll();
     }
 
-    complete(
+    async complete(
         id: string,
     ) {
+
+        const evaluation = await this.repository.findById(
+            id,
+        );
+
+        if (!evaluation) {
+            throw new NotFoundException(
+                'Evaluation not found',
+            );
+        }
+
+        if (
+            evaluation.status !==
+            EvaluationStatus.DRAFT
+        ) {
+            throw new BadRequestException(
+                'Evaluation is already completed',
+            );
+        }
+
         return this.repository.update(
             id,
             {
-                status:
-                    EvaluationStatus.COMPLETED,
+                status: EvaluationStatus.COMPLETED,
             },
         );
     }

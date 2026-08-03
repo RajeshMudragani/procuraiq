@@ -1,0 +1,36 @@
+enum ApprovalEntityType {
+  RFQ
+  AWARD
+  PURCHASE_ORDER
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model Approval {
+  id String @id @default(uuid())
+
+  entityType ApprovalEntityType
+
+  entityId String
+
+  requestedBy String
+
+  status ApprovalStatus @default(PENDING)
+
+  currentStep Int @default(1)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  steps ApprovalStep[]
+
+  @@index([entityType, entityId])
+
+  @@map("approvals")
+}

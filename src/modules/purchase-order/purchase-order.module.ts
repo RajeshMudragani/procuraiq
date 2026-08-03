@@ -3,10 +3,12 @@ import { PurchaseOrderItemModule } from '../purchase-order-item/purchase-order-i
 import { PurchaseOrderController } from './purchase-order.controller';
 import { PurchaseOrderRepository } from './purchase-order.repository';
 import { PurchaseOrderService } from './purchase-order.service';
+import { AwardModule } from '../award/award.module';
 
 @Module({
     imports: [
         PurchaseOrderItemModule,
+        AwardModule,
     ],
 
     controllers: [
