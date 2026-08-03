@@ -1,0 +1,43 @@
+enum AwardStatus {
+  DRAFT
+  AWARDED
+  CANCELLED
+}
+
+model Award {
+  id String @id @default(uuid())
+
+  rfqId String
+
+  evaluationId String
+
+  supplierId String
+
+  awardNumber String @unique
+
+  status AwardStatus @default(DRAFT)
+
+  awardedBy String
+
+  awardedAt DateTime?
+
+  remarks String?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  rfq Rfq @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+
+  evaluation Evaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  items          AwardItem[]
+  purchaseOrders PurchaseOrder[]
+
+  @@index([rfqId])
+  @@index([evaluationId])
+  @@index([supplierId])
+  @@map("awards")
+}

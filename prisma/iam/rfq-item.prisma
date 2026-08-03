@@ -1,0 +1,26 @@
+model RfqItem {
+  id String @id @default(uuid())
+
+  rfqId String
+
+  itemCode String?
+
+  itemName String
+
+  description String?
+
+  quantity Decimal
+
+  uom String
+
+  targetPrice Decimal?
+
+  createdAt DateTime @default(now())
+
+  rfq            Rfq             @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  quotationItems QuotationItem[]
+  awardItems     AwardItem[]
+
+  @@index([rfqId])
+  @@map("rfq_items")
+}

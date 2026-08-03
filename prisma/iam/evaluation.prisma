@@ -1,0 +1,30 @@
+enum EvaluationStatus {
+  DRAFT
+  COMPLETED
+}
+
+model Evaluation {
+  id String @id @default(uuid())
+
+  rfqId String
+
+  evaluationNumber String @unique
+
+  status EvaluationStatus @default(DRAFT)
+
+  evaluatedBy String
+
+  notes String?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  rfq Rfq @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+
+  items  EvaluationItem[]
+  awards Award[]
+
+  @@index([rfqId])
+  @@map("evaluations")
+}

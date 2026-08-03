@@ -1,0 +1,42 @@
+enum RfqStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  AWARDED
+  CANCELLED
+}
+
+model Rfq {
+  id String @id @default(uuid())
+
+  tenantId String
+
+  rfqNumber String @unique
+
+  title String
+
+  description String?
+
+  status RfqStatus
+
+  currency String
+
+  submissionDeadline DateTime
+
+  createdBy String
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  items RfqItem[]
+
+  suppliers   RfqSupplier[]
+  quotations  Quotation[]
+  evaluations Evaluation[]
+  awards      Award[]
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("rfqs")
+}

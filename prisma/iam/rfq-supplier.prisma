@@ -1,0 +1,34 @@
+enum RfqSupplierStatus {
+  INVITED
+  ACCEPTED
+  DECLINED
+  SUBMITTED
+}
+
+model RfqSupplier {
+  id String @id @default(uuid())
+
+  rfqId String
+
+  supplierId String
+
+  status RfqSupplierStatus @default(INVITED)
+
+  invitedAt DateTime @default(now())
+
+  respondedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  rfq Rfq @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@unique([rfqId, supplierId])
+  @@index([rfqId])
+  @@index([supplierId])
+  @@index([status])
+  @@map("rfq_suppliers")
+}

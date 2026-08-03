@@ -1,0 +1,40 @@
+enum QuotationStatus {
+  DRAFT
+  SUBMITTED
+  WITHDRAWN
+  ACCEPTED
+  REJECTED
+}
+
+model Quotation {
+  id String @id @default(uuid())
+
+  rfqId String
+
+  supplierId String
+
+  quotationNumber String @unique
+
+  status QuotationStatus @default(DRAFT)
+
+  totalAmount Decimal @default(0)
+
+  remarks String?
+
+  submittedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  rfq Rfq @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  items           QuotationItem[]
+  evaluationItems EvaluationItem[]
+
+  @@index([rfqId])
+  @@index([supplierId])
+  @@map("quotations")
+}

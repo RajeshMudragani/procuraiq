@@ -1,0 +1,31 @@
+model EvaluationItem {
+  id String @id @default(uuid())
+
+  evaluationId String
+
+  quotationId String
+
+  supplierId String
+
+  priceScore Decimal
+
+  deliveryScore Decimal
+
+  qualityScore Decimal
+
+  totalScore Decimal
+
+  remarks String?
+
+  createdAt DateTime @default(now())
+
+  evaluation Evaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+
+  quotation Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@index([evaluationId])
+  @@index([quotationId])
+  @@map("evaluation_items")
+}

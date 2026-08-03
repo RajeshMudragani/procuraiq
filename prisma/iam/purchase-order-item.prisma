@@ -1,0 +1,26 @@
+model PurchaseOrderItem {
+  id String @id @default(uuid())
+
+  purchaseOrderId String
+
+  awardItemId String
+
+  itemName String
+
+  quantity Decimal
+
+  unitPrice Decimal
+
+  totalAmount Decimal
+
+  remarks String?
+
+  createdAt DateTime @default(now())
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+
+  awardItem AwardItem @relation(fields: [awardItemId], references: [id], onDelete: Cascade)
+
+  @@index([purchaseOrderId])
+  @@map("purchase_order_items")
+}

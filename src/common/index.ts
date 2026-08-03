@@ -1,6 +1,6 @@
 export * from './repositories/base.repository';
 
-export * from './dto/pagination.dto
-export * from './dto/paginated-response.dto
-export * from './dto/api-response.dto
+export * from './dto/pagination.dto';
+export * from './dto/paginated-response.dto';
+export * from './dto/api-response.dto';
 

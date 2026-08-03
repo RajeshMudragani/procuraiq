@@ -1,0 +1,41 @@
+enum SupplierStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+model Supplier {
+  id String @id @default(uuid())
+
+  tenantId String
+
+  supplierCode String @unique
+
+  name String
+
+  email String?
+
+  phone String?
+
+  contactPerson String?
+
+  taxNumber String?
+
+  address String?
+
+  status SupplierStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  rfqs            RfqSupplier[]
+  quotations      Quotation[]
+  evaluationItems EvaluationItem[]
+  awards          Award[]
+  purchaseOrders  PurchaseOrder[]
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("suppliers")
+}

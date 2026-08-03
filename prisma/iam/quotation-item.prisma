@@ -1,0 +1,25 @@
+model QuotationItem {
+  id String @id @default(uuid())
+
+  quotationId String
+
+  rfqItemId String
+
+  unitPrice Decimal
+
+  quantity Decimal
+
+  leadTimeDays Int?
+
+  remarks String?
+
+  createdAt DateTime @default(now())
+
+  quotation Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  rfqItem    RfqItem     @relation(fields: [rfqItemId], references: [id], onDelete: Cascade)
+  awardItems AwardItem[]
+
+  @@index([quotationId])
+  @@map("quotation_items")
+}

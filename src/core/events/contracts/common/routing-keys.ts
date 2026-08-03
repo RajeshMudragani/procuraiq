@@ -14,4 +14,7 @@ export const RoutingKeys = {
 
     TENANT_CREATED: 'tenant.created',
     TENANT_UPDATED: 'tenant.updated',
+
+    RFQ_CREATED: 'rfq.created',
+    RFQ_SUPPLIER_INVITED: 'rfq.supplier.invited',
 } as const;

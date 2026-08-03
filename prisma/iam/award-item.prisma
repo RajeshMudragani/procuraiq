@@ -1,0 +1,29 @@
+model AwardItem {
+  id String @id @default(uuid())
+
+  awardId String
+
+  rfqItemId String
+
+  quotationItemId String
+
+  awardedQuantity Decimal
+
+  unitPrice Decimal
+
+  totalAmount Decimal
+
+  remarks String?
+
+  createdAt DateTime @default(now())
+
+  award Award @relation(fields: [awardId], references: [id], onDelete: Cascade)
+
+  rfqItem RfqItem @relation(fields: [rfqItemId], references: [id], onDelete: Cascade)
+
+  quotationItem      QuotationItem       @relation(fields: [quotationItemId], references: [id], onDelete: Cascade)
+  purchaseOrderItems PurchaseOrderItem[]
+
+  @@index([awardId])
+  @@map("award_items")
+}

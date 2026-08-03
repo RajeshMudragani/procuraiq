@@ -5,6 +5,7 @@ import { CreateSystemNotificationDto } from './dto/create-system-notification.dt
 import { NotificationRepository } from './notification.repository';
 import { EmailQueueService } from './jobs/email.queue.service';
 import { NotificationChannel } from './enums/notification-channel.enum';
+import { EmailTemplateFactory } from './email/factories/email-template.factory';
 
 @Injectable()
 export class NotificationService {
@@ -48,10 +49,15 @@ export class NotificationService {
                 dto.channel === NotificationChannel.BOTH
             )
         ) {
+            const emailTemplate = EmailTemplateFactory.build(
+                notification.type,
+                dto.metadata,
+            );
+
             await this.emailQueueService.enqueue({
                 to: email,
-                subject: notification.title,
-                html: notification.message,
+                subject: emailTemplate.subject,
+                html: emailTemplate.html,
             });
         }
         return notification;

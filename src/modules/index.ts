@@ -10,6 +10,18 @@ import { UserRoleModule } from './user-role/user-role.module';
 import { RbacModule } from '../core/rbac/rbac.module';
 import { RolePermissionModule } from './role-permission/role-permission.module';
 import { RateLimitModule } from '../core/rate-limit/rate-limit.module';
+import { RfqItemModule } from './rfq-item/rfq-item.module';
+import { RfqModule } from './rfq/rfq.module';
+import { SupplierModule } from './supplier/supplier.module';
+import { EvaluationItemModule } from './evaluation-item/evaluation-item.module';
+import { EvaluationModule } from './evaluation/evaluation.module';
+import { AwardModule } from './award/award.module';
+import { AwardItemModule } from './award-item/award-item.module';
+import { PurchaseOrderModule } from './purchase-order/purchase-order.module';
+import { PurchaseOrderItemModule } from './purchase-order-item/purchase-order-item.module';
+import { RfqSupplierModule } from './rfq-supplier/rfq-supplier.module';
+import { QuotationModule } from './quotation/quotation.module';
+import { QuotationItemModule } from './quotation-item/quotation-item.module';
 
 @Module({
     imports: [
@@ -23,6 +35,23 @@ import { RateLimitModule } from '../core/rate-limit/rate-limit.module';
         UserRoleModule,
         RolePermissionModule,
         RbacModule,
+
+        RfqModule,
+        RfqSupplierModule,
+        RfqItemModule,
+        SupplierModule,
+
+        EvaluationModule,
+        EvaluationItemModule,
+
+        AwardModule,
+        AwardItemModule,
+
+        PurchaseOrderModule,
+        PurchaseOrderItemModule,
+
+        QuotationModule,
+        QuotationItemModule,
     ],
 })
 

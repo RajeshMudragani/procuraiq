@@ -1,0 +1,43 @@
+enum PurchaseOrderStatus {
+  DRAFT
+  ISSUED
+  APPROVED
+  CLOSED
+  CANCELLED
+}
+
+model PurchaseOrder {
+  id String @id @default(uuid())
+
+  awardId String
+
+  supplierId String
+
+  poNumber String @unique
+
+  status PurchaseOrderStatus @default(DRAFT)
+
+  totalAmount Decimal @default(0)
+
+  currency String
+
+  issuedBy String
+
+  issuedAt DateTime?
+
+  remarks String?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  award Award @relation(fields: [awardId], references: [id], onDelete: Cascade)
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  items PurchaseOrderItem[]
+
+  @@index([awardId])
+  @@index([supplierId])
+  @@map("purchase_orders")
+}
