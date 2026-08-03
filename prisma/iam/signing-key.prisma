@@ -1,26 +1,25 @@
 model SigningKey {
-    id String @id @default(uuid())
+  id String @id @default(uuid())
 
-    kid String @unique
+  kid String @unique
 
-    algorithm String
+  algorithm String
 
-    publicKey String
+  publicKey String
 
-    privateKey String
+  privateKey String
 
-    isActive Boolean @default(false)
+  isActive Boolean @default(false)
 
-    activatedAt DateTime?
+  activatedAt DateTime?
 
-    expiresAt DateTime?
+  expiresAt DateTime?
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
-    updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
-    @@index([kid])
-    @@index([isActive])
-
-    @@map("signing_keys")
+  @@index([kid])
+  @@index([isActive])
+  @@map("signing_keys")
 }

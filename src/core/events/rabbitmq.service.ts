@@ -11,8 +11,7 @@ import * as amqp from 'amqplib';
 export class RabbitMqService
     implements OnModuleInit, OnModuleDestroy
 {
-    private readonly logger =
-        new Logger(
+    private readonly logger = new Logger(
             RabbitMqService.name,
         );
 
@@ -34,8 +33,7 @@ export class RabbitMqService
             'RabbitMQ connection established',
         );
 
-        this.channel =
-            await this.connection.createChannel();
+        this.channel = await this.connection.createChannel();
 
         this.logger.log(
             'RabbitMQ channel created',

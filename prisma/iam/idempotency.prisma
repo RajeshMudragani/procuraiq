@@ -1,20 +1,19 @@
 model IdempotencyKey {
-    id String @id @default(uuid())
+  id String @id @default(uuid())
 
-    key String @unique
+  key String @unique
 
-    requestHash String
+  requestHash String
 
-    method String
-    path String
+  method String
+  path   String
 
-    response Json?
+  response Json?
 
-    status String
+  status String
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
-    @@index([key])
-
-    @@map("idempotency_keys")
+  @@index([key])
+  @@map("idempotency_keys")
 }

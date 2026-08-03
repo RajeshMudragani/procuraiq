@@ -1,27 +1,25 @@
 model OutboxMessage {
-    id String @id @default(uuid())
+  id String @id @default(uuid())
 
-    eventType String
+  eventType String
 
-    routingKey String
+  routingKey String
 
-    payload Json
+  payload Json
 
-    status String
+  status String
 
-    retryCount Int @default(0)
+  retryCount Int @default(0)
 
-    processedAt DateTime?
+  processedAt DateTime?
 
-    errorMessage String?
+  errorMessage String?
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
-    updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
-    @@index([status])
-
-    @@index([createdAt])
-
-    @@map("outbox_messages")
+  @@index([status])
+  @@index([createdAt])
+  @@map("outbox_messages")
 }

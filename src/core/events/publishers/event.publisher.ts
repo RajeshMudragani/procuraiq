@@ -22,6 +22,22 @@ export class EventPublisher {
     ): Promise<void> {
         const channel = this.rabbitMqService.getChannel();
 
+        console.log(
+            'PUBLISHING:',
+            JSON.stringify(
+                payload,
+                null,
+                2,
+            ),
+        );
+
+
+        console.log(
+            'PUBLISHING EVENT:',
+            routingKey,
+            payload,
+        );
+
         channel.publish(
             this.rabbitMqService.getExchange(),
             routingKey,

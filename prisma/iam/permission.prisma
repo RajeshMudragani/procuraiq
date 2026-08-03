@@ -13,6 +13,5 @@ model Permission {
   roles RolePermission[]
 
   @@index([code])
-
   @@map("permissions")
 }

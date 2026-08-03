@@ -10,6 +10,7 @@ import { RequestContextMiddleware } from './core/middleware/request-context.midd
 import { ModulesModule } from './modules';
 import { EventsModule } from './core/events/events.module';
 import { JobsModule } from './core/jobs/jobs.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { JobsModule } from './core/jobs/jobs.module';
     ModulesModule,
     EventsModule,
     JobsModule,
+    NotificationModule,
 
   ],
 

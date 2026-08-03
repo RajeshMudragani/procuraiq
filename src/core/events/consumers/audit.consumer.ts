@@ -12,10 +12,9 @@ import { AuditHandler } from '../handlers/audit.handler';
 export class AuditConsumer
     implements OnApplicationBootstrap
 {
-    private readonly logger =
-        new Logger(
-            AuditConsumer.name,
-        );
+    private readonly logger = new Logger(
+        AuditConsumer.name,
+    );
 
     constructor(
         private readonly rabbitMqService: RabbitMqService,

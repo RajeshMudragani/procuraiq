@@ -15,16 +15,26 @@ export class AuditHandler {
     async handle(
         payload: any,
     ): Promise<void> {
+
+        console.log(
+            'AUDIT PAYLOAD:',
+            JSON.stringify(
+                payload,
+                null,
+                2,
+            ),
+        );
+
         this.logger.log(
-            `Handling audit event: ${payload.eventType}`,
+            `Handling audit event: ${payload?.eventType}`,
         );
 
         await this.auditService.createLog(
-            payload.eventType,
+            payload?.eventType,
             'User',
-            payload.userId,
-            payload.triggeredBy,
-            payload.tenantId,
+            payload?.userId,
+            payload?.triggeredBy,
+            payload?.tenantId,
             null,
             payload,
         );

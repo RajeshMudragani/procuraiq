@@ -1,0 +1,30 @@
+model Notification {
+  id String @id @default(uuid())
+
+  tenantId String
+
+  userId String
+
+  type String
+
+  channel String
+
+  title String
+
+  message String
+
+  metadata Json?
+
+  isRead Boolean @default(false)
+
+  readAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([isRead])
+  @@map("notifications")
+}
