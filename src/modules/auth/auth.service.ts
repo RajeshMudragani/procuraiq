@@ -5,19 +5,20 @@ import {
 } from '@nestjs/common';
 
 import { JwtService } from '@nestjs/jwt';
-
 import * as bcrypt from 'bcrypt';
-
 import { PrismaService } from '../../core/database/prisma.service';
-
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { SigningKeyService } from './signing-key/signing-key.service';
+import { JwtKeyResolverService } from './services/jwt-key-resolver.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly jwtService: JwtService,
+        private readonly signingKeyService: SigningKeyService,
+        private readonly jwtKeyResolverService: JwtKeyResolverService,
     ) {}
 
     async register(dto: RegisterDto) {
@@ -87,21 +88,14 @@ export class AuthService {
             email: user.email,
         };
 
-        const accessToken =
-        await this.jwtService.signAsync(
-            payload,
-            {
-                expiresIn: '15m',
-            },
-        );
+        const accessToken = await this.generateAccessToken(
+                payload,
+            );
 
-        const refreshToken =
-        await this.jwtService.signAsync(
-            payload,
-            {
-                expiresIn: '7d',
-            },
-        );
+        const refreshToken = await this.generateRefreshToken(
+                payload,
+            );
+
 
         const refreshTokenHash =
         await bcrypt.hash(
@@ -131,10 +125,9 @@ export class AuthService {
     async refresh(
         refreshToken: string,
     ) {
-        const payload =
-        await this.jwtService.verifyAsync(
-            refreshToken,
-        );
+        const payload = await this.jwtKeyResolverService.verifyToken(
+                refreshToken,
+            );
 
         const sessions =
         await this.prisma.userSession.findMany({
@@ -146,7 +139,7 @@ export class AuthService {
             },
         });
 
-        let validSession = false;
+        let validSession: typeof sessions[number] | null = null;
 
         for (const session of sessions) {
         const matched =
@@ -156,7 +149,7 @@ export class AuthService {
             );
 
             if (matched) {
-                validSession = true;
+                validSession = session;
                 break;
             }
         }
@@ -167,36 +160,61 @@ export class AuthService {
             );
         }
 
-        const accessToken =
-            await this.jwtService.signAsync({
+        await this.prisma.userSession.delete({
+            where: {
+                id: validSession.id,
+            },
+        });
+
+        const accessToken = await this.generateAccessToken({
                 sub: payload.sub,
                 tenantId: payload.tenantId,
                 email: payload.email,
             });
 
+        const newRefreshToken = await this.generateRefreshToken({
+                sub: payload.sub,
+                tenantId: payload.tenantId,
+                email: payload.email,
+            });
+
+        const refreshTokenHash = await bcrypt.hash(
+                newRefreshToken,
+                12,
+            );
+
+        await this.prisma.userSession.create({
+            data: {
+                userId: payload.sub,
+                refreshTokenHash,
+                expiresAt: new Date(
+                    Date.now() +
+                    7 * 24 * 60 * 60 * 1000,
+                ),
+            },
+        });
+
         return {
             accessToken,
+            refreshToken: newRefreshToken,
         };
     }
 
     async logout(
         refreshToken: string,
     ) {
-        const payload =
-            await this.jwtService.verifyAsync(
+        const payload = await this.jwtKeyResolverService.verifyToken(
                 refreshToken,
             );
 
-        const sessions =
-            await this.prisma.userSession.findMany({
+        const sessions = await this.prisma.userSession.findMany({
                 where: {
                     userId: payload.sub,
                 },
             });
 
         for (const session of sessions) {
-            const matched =
-                await bcrypt.compare(
+            const matched = await bcrypt.compare(
                     refreshToken,
                     session.refreshTokenHash,
                 );
@@ -215,5 +233,44 @@ export class AuthService {
         return {
             message: 'Logged out successfully',
         };
+    }
+
+    private async generateAccessToken(
+        payload: Record<string, unknown>,
+    ): Promise<string> {
+
+        const key = await this.signingKeyService.getActiveKey();
+
+        try {
+            return await this.jwtService.signAsync(
+                payload,
+                {
+                    algorithm: 'RS256',
+                    privateKey: key.privateKey,
+                    keyid: key.kid,
+                    expiresIn: '15m',
+                },
+            );
+        } catch (error) {
+            console.error('JWT SIGN ERROR', error);
+            throw error;
+        }
+    }
+
+    private async generateRefreshToken(
+        payload: Record<string, unknown>,
+    ): Promise<string> {
+
+        const key = await this.signingKeyService.getActiveKey();
+
+        return this.jwtService.signAsync(
+            payload,
+            {
+                algorithm: 'RS256',
+                privateKey: key.privateKey,
+                keyid: key.kid,
+                expiresIn: '7d',
+            },
+        );
     }
 }

@@ -1,0 +1,26 @@
+model SigningKey {
+    id String @id @default(uuid())
+
+    kid String @unique
+
+    algorithm String
+
+    publicKey String
+
+    privateKey String
+
+    isActive Boolean @default(false)
+
+    activatedAt DateTime?
+
+    expiresAt DateTime?
+
+    createdAt DateTime @default(now())
+
+    updatedAt DateTime @updatedAt
+
+    @@index([kid])
+    @@index([isActive])
+
+    @@map("signing_keys")
+}

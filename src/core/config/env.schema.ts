@@ -16,9 +16,10 @@ export const envSchema = z.object({
 
   RABBITMQ_URL: z.string(),
 
-  JWT_SECRET: z.string(),
+  JWT_ACCESS_TOKEN_TTL: z.string().default('15m'),
 
-  JWT_REFRESH_SECRET: z.string(),
+  JWT_REFRESH_TOKEN_TTL: z.string().default('7d'),
+
 });
 
 export type EnvSchema = z.infer<typeof envSchema>;

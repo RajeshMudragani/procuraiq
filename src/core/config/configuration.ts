@@ -18,7 +18,7 @@ export default () => ({
   },
 
   auth: {
-    jwtSecret: process.env.JWT_SECRET,
-    refreshSecret: process.env.JWT_REFRESH_SECRET,
+    jwtAccessTokenTtl: process.env.JWT_ACCESS_TOKEN_TTL,
+    jwtRefreshTokenTtl: process.env.JWT_REFRESH_TOKEN_TTL,
   },
 });

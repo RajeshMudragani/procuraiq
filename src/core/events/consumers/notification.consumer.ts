@@ -46,8 +46,6 @@ export class NotificationConsumer
                     'Notification Event Received',
                 );
 
-                console.log(payload);
-
                 channel.ack(message);
             },
         );
