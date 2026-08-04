@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { EventsModule } from '../../core/events/events.module';
 import { RfqItemModule } from '../rfq-item/rfq-item.module';
 import { RfqController } from './rfq.controller';
@@ -10,7 +10,7 @@ import { ApprovalModule } from '../approval/approval.module';
     imports: [
         EventsModule,
         RfqItemModule,
-        ApprovalModule,
+        forwardRef(() => ApprovalModule),
     ],
 
     controllers: [

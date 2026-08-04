@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { EvaluationItemModule } from '../evaluation-item/evaluation-item.module';
 import { EvaluationController } from './evaluation.controller';
 import { EvaluationRepository } from './evaluation.repository';
@@ -8,7 +8,7 @@ import { QuotationModule } from '../quotation/quotation.module';
 @Module({
     imports: [
         EvaluationItemModule,
-        QuotationModule,
+        forwardRef(() => QuotationModule),
     ],
 
     controllers: [

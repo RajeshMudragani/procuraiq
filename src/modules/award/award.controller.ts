@@ -15,7 +15,9 @@ import {
 
 import { CreateAwardDto } from './dto/create-award.dto';
 import { AwardService } from './award.service';
-
+import {
+    SubmitAwardForApprovalDto
+} from './dto/submit-award-for-approval.dto';
 @ApiTags('Award')
 @Controller('awards')
 export class AwardController {
@@ -162,6 +164,21 @@ export class AwardController {
     ) {
         return this.service.cancel(
             id,
+        );
+    }
+
+    @Post(':id/submit-for-approval')
+    
+    submitForApproval(
+        @Param('id')
+        id: string,
+
+        @Body()
+        dto: SubmitAwardForApprovalDto,
+    ) {
+        return this.service.submitForApproval(
+            id,
+            dto,
         );
     }
 }

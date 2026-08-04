@@ -4,11 +4,13 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 
-import { AwardStatus, EvaluationStatus } from '@prisma/client';
+import { ApprovalEntityType, AwardStatus, EvaluationStatus } from '@prisma/client';
 import { AwardRepository } from './award.repository';
 import { AwardItemService } from '../award-item/award-item.service';
 import { CreateAwardDto } from './dto/create-award.dto';
 import { EvaluationRepository } from '../evaluation/evaluation.repository';
+import { ApprovalService } from '../approval/approval.service';
+import { SubmitAwardForApprovalDto } from './dto/submit-award-for-approval.dto';
 
 @Injectable()
 export class AwardService {
@@ -17,6 +19,7 @@ export class AwardService {
         private readonly repository: AwardRepository,
         private readonly itemService: AwardItemService,
         private readonly evaluationRepository: EvaluationRepository,
+        private readonly approvalService: ApprovalService,
     ) {}
 
     async create(
@@ -105,10 +108,10 @@ export class AwardService {
 
         if (
             award.status !==
-            AwardStatus.DRAFT
+            AwardStatus.APPROVED
         ) {
             throw new BadRequestException(
-                'Award has already been processed',
+                'Award approval not completed',
             );
         }
 
@@ -128,6 +131,62 @@ export class AwardService {
             id,
             {
                 status: AwardStatus.CANCELLED,
+            },
+        );
+    }
+
+    async submitForApproval(
+        id: string,
+        dto: SubmitAwardForApprovalDto,
+    ) {
+
+        const award = await this.repository.findById(id);
+
+        if (!award) {
+            throw new NotFoundException(
+                'Award not found',
+            );
+        }
+
+        if (
+            award.status !==
+            AwardStatus.DRAFT
+        ) {
+            throw new BadRequestException(
+                'Only draft awards can be submitted for approval',
+            );
+        }
+
+        const approval = await this.approvalService.create({
+            entityType: ApprovalEntityType.AWARD,
+            entityId: award.id,
+            requestedBy: dto.requestedBy,
+            steps: dto.steps,
+        });
+
+        await this.repository.update(
+            id,
+            {
+                status: AwardStatus.PENDING_APPROVAL,
+            },
+        );
+
+        return {
+            awardId: award.id,
+            approvalId: approval.id,
+            status: 'PENDING_APPROVAL',
+        };
+    }
+
+    async markApproved(
+        id: string,
+    ) {
+
+        return this.repository.update(
+            id,
+            {
+                status:
+                    AwardStatus.APPROVED,
             },
         );
     }

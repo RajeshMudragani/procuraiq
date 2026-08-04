@@ -1,14 +1,16 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AwardItemModule } from '../award-item/award-item.module';
 import { AwardController } from './award.controller';
 import { AwardRepository } from './award.repository';
 import { AwardService } from './award.service';
 import { EvaluationModule } from '../evaluation/evaluation.module';
+import { ApprovalModule } from '../approval/approval.module';
 
 @Module({
     imports: [
         AwardItemModule,
-        EvaluationModule,
+        forwardRef(() => EvaluationModule),
+        forwardRef(() => ApprovalModule),
     ],
 
     controllers: [

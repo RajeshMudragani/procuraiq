@@ -1,5 +1,7 @@
 enum AwardStatus {
   DRAFT
+  PENDING_APPROVAL
+  APPROVED
   AWARDED
   CANCELLED
 }

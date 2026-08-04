@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { RfqModule } from '../rfq/rfq.module';
 import { QuotationItemModule } from '../quotation-item/quotation-item.module';
@@ -10,7 +10,7 @@ import { QuotationService } from './quotation.service';
 @Module({
     imports: [
         QuotationItemModule,
-        RfqModule,
+        forwardRef(() => RfqModule),
     ],
 
     controllers: [
