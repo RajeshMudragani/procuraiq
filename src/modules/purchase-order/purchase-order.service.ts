@@ -6,8 +6,16 @@ import {
 import { PurchaseOrderRepository } from './purchase-order.repository';
 import { PurchaseOrderItemService } from '../purchase-order-item/purchase-order-item.service';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
-import { AwardStatus, PurchaseOrderStatus } from '@prisma/client';
+import { ApprovalEntityType, AwardStatus, PurchaseOrderStatus } from '@prisma/client';
 import { AwardRepository } from '../award/award.repository';
+import { SubmitPoForApprovalDto } from './dto/submit-po-for-approval.dto';
+import {
+    Inject,
+    forwardRef,
+} from '@nestjs/common';
+
+import { ApprovalService }
+from '../approval/approval.service';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -16,6 +24,13 @@ export class PurchaseOrderService {
         private readonly repository: PurchaseOrderRepository,
         private readonly itemService: PurchaseOrderItemService,
         private readonly awardRepository: AwardRepository,
+
+        @Inject(
+            forwardRef(
+                () => ApprovalService,
+            ),
+        )
+        private readonly approvalService: ApprovalService,
     ) {}
 
     async create(
@@ -147,10 +162,10 @@ export class PurchaseOrderService {
 
         if (
             po.status !==
-            PurchaseOrderStatus.DRAFT
+            PurchaseOrderStatus.APPROVED
         ) {
             throw new BadRequestException(
-                'Purchase Order has already been issued',
+                'Purchase order approval not completed',
             );
         }
 
@@ -180,7 +195,55 @@ export class PurchaseOrderService {
         return this.repository.update(
             id,
             {
-                status: PurchaseOrderStatus.CLOSED,
+                status: PurchaseOrderStatus.CANCELLED,
+            },
+        );
+    }
+
+    async submitForApproval(
+        id: string,
+        dto: SubmitPoForApprovalDto,
+    ) {
+
+        const po = await this.findById(id);
+
+        if (
+            po.status !==
+            PurchaseOrderStatus.DRAFT
+        ) {
+            throw new BadRequestException(
+                'Only draft purchase orders can be submitted for approval',
+            );
+        }
+
+        const approval = await this.approvalService.create({
+                entityType: ApprovalEntityType.PURCHASE_ORDER,
+                entityId: po.id,
+                requestedBy: dto.requestedBy,
+                steps: dto.steps,
+            });
+
+        await this.repository.update(
+            id,
+            {
+                status: PurchaseOrderStatus.PENDING_APPROVAL,
+            },
+        );
+
+        return {
+            poId: po.id,
+            approvalId: approval.id,
+            status: 'PENDING_APPROVAL',
+        };
+    }
+
+    async markApproved(
+        id: string,
+    ) {
+        return this.repository.update(
+            id,
+            {
+                status: PurchaseOrderStatus.APPROVED,
             },
         );
     }

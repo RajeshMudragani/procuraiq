@@ -1,14 +1,20 @@
-import { Module } from '@nestjs/common';
-import { PurchaseOrderItemModule } from '../purchase-order-item/purchase-order-item.module';
-import { PurchaseOrderController } from './purchase-order.controller';
+import {
+    Module,
+    forwardRef,
+} from '@nestjs/common';
+
+import { ApprovalModule } from '../approval/approval.module';
 import { PurchaseOrderRepository } from './purchase-order.repository';
 import { PurchaseOrderService } from './purchase-order.service';
+import { PurchaseOrderItemModule } from '../purchase-order-item/purchase-order-item.module';
 import { AwardModule } from '../award/award.module';
+import { PurchaseOrderController } from './purchase-order.controller';
 
 @Module({
     imports: [
         PurchaseOrderItemModule,
-        AwardModule,
+        forwardRef(() => ApprovalModule),
+        forwardRef(() => AwardModule),
     ],
 
     controllers: [
@@ -21,6 +27,7 @@ import { AwardModule } from '../award/award.module';
     ],
 
     exports: [
+        PurchaseOrderRepository,
         PurchaseOrderService,
     ],
 })

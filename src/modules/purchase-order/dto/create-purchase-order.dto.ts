@@ -5,11 +5,7 @@ import {
 } from 'class-validator';
 
 import { Type } from 'class-transformer';
-
-import {
-    ApiProperty,
-} from '@nestjs/swagger';
-
+import { ApiProperty } from '@nestjs/swagger';
 import {
     CreatePurchaseOrderItemDto
 } from '../../purchase-order-item/dto/create-purchase-order-item.dto';

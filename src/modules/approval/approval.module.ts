@@ -7,12 +7,12 @@ import { ApprovalController } from './approval.controller';
 import { ApprovalRepository } from './approval.repository';
 import { ApprovalService } from './approval.service';
 import { AwardModule } from '../award/award.module';
+import { PurchaseOrderModule } from '../purchase-order/purchase-order.module';
 
 @Module({
     imports: [
-        forwardRef(
-            () => AwardModule,
-        ),
+        forwardRef(() => AwardModule),
+        forwardRef(() => PurchaseOrderModule),
     ],
 
     controllers: [

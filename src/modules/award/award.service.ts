@@ -2,6 +2,8 @@ import {
     BadRequestException,
     Injectable,
     NotFoundException,
+    Inject,
+    forwardRef,
 } from '@nestjs/common';
 
 import { ApprovalEntityType, AwardStatus, EvaluationStatus } from '@prisma/client';
@@ -19,6 +21,12 @@ export class AwardService {
         private readonly repository: AwardRepository,
         private readonly itemService: AwardItemService,
         private readonly evaluationRepository: EvaluationRepository,
+
+        @Inject(
+            forwardRef(
+                () => ApprovalService,
+            ),
+        )
         private readonly approvalService: ApprovalService,
     ) {}
 

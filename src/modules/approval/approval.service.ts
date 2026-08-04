@@ -4,27 +4,21 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 
-import {
-    ApprovalStatus,
-} from '@prisma/client';
-
-import { ApprovalRepository }
-from './approval.repository';
-
-import { CreateApprovalDto }
-from './dto/create-approval.dto';
-
-import { ApproveDto }
-from './dto/approve.dto';
-
-import { RejectDto }
-from './dto/reject.dto';
+import { ApprovalEntityType, ApprovalStatus } from '@prisma/client';
+import { ApprovalRepository } from './approval.repository';
+import { CreateApprovalDto } from './dto/create-approval.dto';
+import { ApproveDto } from './dto/approve.dto';
+import { RejectDto } from './dto/reject.dto';
+import { PurchaseOrderService } from '../purchase-order/purchase-order.service';
+import { AwardService } from '../award/award.service';
 
 @Injectable()
 export class ApprovalService {
 
     constructor(
         private readonly repository: ApprovalRepository,
+        private readonly awardService: AwardService,
+        private readonly purchaseOrderService: PurchaseOrderService,
     ) {}
 
     async create(
@@ -102,6 +96,35 @@ export class ApprovalService {
         return approval;
     }
 
+    private async updateEntityStatus(
+        approval: any,
+    ) {
+
+        switch (
+            approval.entityType
+        ) {
+
+            case ApprovalEntityType.AWARD:
+
+                await this.awardService.markApproved(
+                    approval.entityId,
+                );
+
+                break;
+
+            case ApprovalEntityType.PURCHASE_ORDER:
+
+                await this.purchaseOrderService.markApproved(
+                    approval.entityId,
+                );
+
+                break;
+
+            default:
+                break;
+        }
+    }
+
     async approve(
         id: string,
         dto: ApproveDto,
@@ -118,7 +141,9 @@ export class ApprovalService {
         }
 
         const currentStep = approval.steps.find(
-            step => step.stepNumber === approval.currentStep,
+            step =>
+                step.stepNumber ===
+                approval.currentStep,
         );
 
         if (!currentStep) {
@@ -148,14 +173,19 @@ export class ApprovalService {
         await this.repository.updateStep(
             currentStep.id,
             {
-                status: ApprovalStatus.APPROVED,
-                comments: dto.comments,
-                actionAt: new Date(),
+                status:
+                    ApprovalStatus.APPROVED,
+                comments:
+                    dto.comments,
+                actionAt:
+                    new Date(),
             },
         );
 
         const nextStep = approval.steps.find(
-            step => step.stepNumber === approval.currentStep + 1,
+            step =>
+                step.stepNumber ===
+                approval.currentStep + 1,
         );
 
         if (nextStep) {
@@ -163,7 +193,8 @@ export class ApprovalService {
             await this.repository.update(
                 id,
                 {
-                    currentStep: approval.currentStep + 1,
+                    currentStep:
+                        approval.currentStep + 1,
                 },
             );
         }
@@ -172,14 +203,17 @@ export class ApprovalService {
             await this.repository.update(
                 id,
                 {
-                    status: ApprovalStatus.APPROVED,
+                    status:
+                        ApprovalStatus.APPROVED,
                 },
+            );
+
+            await this.updateEntityStatus(
+                approval,
             );
         }
 
-        return this.findById(
-            id,
-        );
+        return this.findById(id);
     }
 
     async reject(

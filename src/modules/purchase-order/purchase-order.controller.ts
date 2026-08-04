@@ -15,6 +15,7 @@ import {
 
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
 import { PurchaseOrderService } from './purchase-order.service';
+import { SubmitPoForApprovalDto } from './dto/submit-po-for-approval.dto';
 
 @ApiTags('Purchase Order')
 @Controller('purchase-orders')
@@ -204,6 +205,20 @@ export class PurchaseOrderController {
     ) {
         return this.service.close(
             id,
+        );
+    }
+
+    @Post(':id/submit-for-approval')
+    submitForApproval(
+        @Param('id')
+        id: string,
+
+        @Body()
+        dto: SubmitPoForApprovalDto,
+    ) {
+        return this.service.submitForApproval(
+            id,
+            dto,
         );
     }
 }

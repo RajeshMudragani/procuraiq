@@ -1,8 +1,8 @@
 enum PurchaseOrderStatus {
   DRAFT
-  ISSUED
+  PENDING_APPROVAL
   APPROVED
-  CLOSED
+  ISSUED
   CANCELLED
 }
 
