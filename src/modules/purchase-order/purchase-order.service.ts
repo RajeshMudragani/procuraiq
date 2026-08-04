@@ -9,13 +9,7 @@ import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
 import { ApprovalEntityType, AwardStatus, PurchaseOrderStatus } from '@prisma/client';
 import { AwardRepository } from '../award/award.repository';
 import { SubmitPoForApprovalDto } from './dto/submit-po-for-approval.dto';
-import {
-    Inject,
-    forwardRef,
-} from '@nestjs/common';
-
-import { ApprovalService }
-from '../approval/approval.service';
+import { ApprovalSubmissionService } from '../approval/approval-submission.service';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -24,13 +18,7 @@ export class PurchaseOrderService {
         private readonly repository: PurchaseOrderRepository,
         private readonly itemService: PurchaseOrderItemService,
         private readonly awardRepository: AwardRepository,
-
-        @Inject(
-            forwardRef(
-                () => ApprovalService,
-            ),
-        )
-        private readonly approvalService: ApprovalService,
+        private readonly approvalSubmissionService: ApprovalSubmissionService,
     ) {}
 
     async create(
@@ -216,7 +204,7 @@ export class PurchaseOrderService {
             );
         }
 
-        const approval = await this.approvalService.create({
+        const approval = await this.approvalSubmissionService.create({
                 entityType: ApprovalEntityType.PURCHASE_ORDER,
                 entityId: po.id,
                 requestedBy: dto.requestedBy,

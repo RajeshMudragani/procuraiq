@@ -2,8 +2,6 @@ import {
     BadRequestException,
     Injectable,
     NotFoundException,
-    Inject,
-    forwardRef,
 } from '@nestjs/common';
 
 import { ApprovalEntityType, AwardStatus, EvaluationStatus } from '@prisma/client';
@@ -11,8 +9,8 @@ import { AwardRepository } from './award.repository';
 import { AwardItemService } from '../award-item/award-item.service';
 import { CreateAwardDto } from './dto/create-award.dto';
 import { EvaluationRepository } from '../evaluation/evaluation.repository';
-import { ApprovalService } from '../approval/approval.service';
 import { SubmitAwardForApprovalDto } from './dto/submit-award-for-approval.dto';
+import { ApprovalSubmissionService } from '../approval/approval-submission.service';
 
 @Injectable()
 export class AwardService {
@@ -21,13 +19,7 @@ export class AwardService {
         private readonly repository: AwardRepository,
         private readonly itemService: AwardItemService,
         private readonly evaluationRepository: EvaluationRepository,
-
-        @Inject(
-            forwardRef(
-                () => ApprovalService,
-            ),
-        )
-        private readonly approvalService: ApprovalService,
+        private readonly approvalSubmissionService: ApprovalSubmissionService,
     ) {}
 
     async create(
@@ -165,7 +157,7 @@ export class AwardService {
             );
         }
 
-        const approval = await this.approvalService.create({
+        const approval = await this.approvalSubmissionService.create({
             entityType: ApprovalEntityType.AWARD,
             entityId: award.id,
             requestedBy: dto.requestedBy,

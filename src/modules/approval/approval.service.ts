@@ -9,16 +9,13 @@ import { ApprovalRepository } from './approval.repository';
 import { CreateApprovalDto } from './dto/create-approval.dto';
 import { ApproveDto } from './dto/approve.dto';
 import { RejectDto } from './dto/reject.dto';
-import { PurchaseOrderService } from '../purchase-order/purchase-order.service';
-import { AwardService } from '../award/award.service';
-
+import { ApprovalRegistryService } from './approval-registry.service';
 @Injectable()
 export class ApprovalService {
 
     constructor(
         private readonly repository: ApprovalRepository,
-        private readonly awardService: AwardService,
-        private readonly purchaseOrderService: PurchaseOrderService,
+        private readonly registry: ApprovalRegistryService,
     ) {}
 
     async create(
@@ -100,29 +97,13 @@ export class ApprovalService {
         approval: any,
     ) {
 
-        switch (
-            approval.entityType
-        ) {
+        const handler = this.registry.getHandler(
+            approval.entityType,
+        );
 
-            case ApprovalEntityType.AWARD:
-
-                await this.awardService.markApproved(
-                    approval.entityId,
-                );
-
-                break;
-
-            case ApprovalEntityType.PURCHASE_ORDER:
-
-                await this.purchaseOrderService.markApproved(
-                    approval.entityId,
-                );
-
-                break;
-
-            default:
-                break;
-        }
+        await handler.markApproved(
+            approval.entityId,
+        );
     }
 
     async approve(
