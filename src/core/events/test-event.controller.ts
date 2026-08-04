@@ -9,8 +9,7 @@ import { RoutingKeys } from './contracts/common/routing-keys';
 @Controller('event-test')
 export class EventTestController {
     constructor(
-        private readonly eventsService:
-            EventsService,
+        private readonly eventsService: EventsService,
     ) {}
 
     @Post('user-created')

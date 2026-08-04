@@ -14,6 +14,7 @@ import { ApprovalService } from './approval.service';
     ],
 
     exports: [
+        ApprovalRepository,
         ApprovalService,
     ],
 })

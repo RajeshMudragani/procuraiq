@@ -7,8 +7,7 @@ import { RequestContextService } from '../logging/request-context.service';
 export class RequestContextMiddleware implements NestMiddleware {
 
     constructor(
-        private readonly requestContext:
-        RequestContextService,
+        private readonly requestContext: RequestContextService,
     ) {}
 
     use( req: Request, res: Response, next: NextFunction ): void {

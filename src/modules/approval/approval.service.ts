@@ -3,23 +3,66 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { ApprovalStatus } from '@prisma/client';
-import { ApprovalRepository } from './approval.repository';
-import { CreateApprovalDto } from './dto/create-approval.dto';
-import { ApproveDto } from './dto/approve.dto';
-import { RejectDto } from './dto/reject.dto';
+
+import {
+    ApprovalStatus,
+} from '@prisma/client';
+
+import { ApprovalRepository }
+from './approval.repository';
+
+import { CreateApprovalDto }
+from './dto/create-approval.dto';
+
+import { ApproveDto }
+from './dto/approve.dto';
+
+import { RejectDto }
+from './dto/reject.dto';
 
 @Injectable()
 export class ApprovalService {
 
     constructor(
-        private readonly repository:
-            ApprovalRepository,
+        private readonly repository: ApprovalRepository,
     ) {}
 
     async create(
         dto: CreateApprovalDto,
     ) {
+
+        const sortedSteps = [...dto.steps].sort(
+            ( a, b ) => a.stepNumber - b.stepNumber,
+        );
+
+        sortedSteps.forEach(
+            (
+                step,
+                index,
+            ) => {
+
+                if ( step.stepNumber !== index + 1 ) {
+                    throw new BadRequestException(
+                        'Step numbers must be sequential starting from 1',
+                    );
+                }
+            },
+        );
+
+        const approvers = dto.steps.map(
+            step => step.approverId,
+        );
+
+        if (
+            new Set(
+                approvers,
+            ).size !==
+            approvers.length
+        ) {
+            throw new BadRequestException(
+                'Duplicate approvers are not allowed',
+            );
+        }
 
         const approval = await this.repository.create({
                 entityType: dto.entityType,
@@ -65,6 +108,15 @@ export class ApprovalService {
     ) {
         const approval = await this.findById(id);
 
+        if (
+            approval.status !==
+            ApprovalStatus.PENDING
+        ) {
+            throw new BadRequestException(
+                'Approval already completed',
+            );
+        }
+
         const currentStep = approval.steps.find(
             step => step.stepNumber === approval.currentStep,
         );
@@ -72,6 +124,15 @@ export class ApprovalService {
         if (!currentStep) {
             throw new NotFoundException(
                 'Approval step not found',
+            );
+        }
+
+        if (
+            currentStep.status !==
+            ApprovalStatus.PENDING
+        ) {
+            throw new BadRequestException(
+                'Approval step already processed',
             );
         }
 
@@ -130,6 +191,15 @@ export class ApprovalService {
             id,
         );
 
+        if (
+            approval.status !==
+            ApprovalStatus.PENDING
+        ) {
+            throw new BadRequestException(
+                'Approval already completed',
+            );
+        }
+
         const currentStep = approval.steps.find(step =>
             step.stepNumber === approval.currentStep,
         );
@@ -137,6 +207,15 @@ export class ApprovalService {
         if (!currentStep) {
             throw new NotFoundException(
                 'Approval step not found',
+            );
+        }
+
+        if (
+            currentStep.status !==
+            ApprovalStatus.PENDING
+        ) {
+            throw new BadRequestException(
+                'Approval step already processed',
             );
         }
 

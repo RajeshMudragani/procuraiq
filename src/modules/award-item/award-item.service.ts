@@ -5,8 +5,7 @@ import { AwardItemRepository } from './award-item.repository';
 export class AwardItemService {
 
     constructor(
-        private readonly repository:
-            AwardItemRepository,
+        private readonly repository: AwardItemRepository,
     ) {}
 
     createMany(

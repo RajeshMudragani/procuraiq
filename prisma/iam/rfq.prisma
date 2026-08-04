@@ -4,6 +4,7 @@ enum RfqStatus {
   CLOSED
   AWARDED
   CANCELLED
+  PENDING_APPROVAL
 }
 
 model Rfq {

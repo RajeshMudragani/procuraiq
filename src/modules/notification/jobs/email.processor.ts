@@ -13,8 +13,7 @@ export class EmailProcessor
     extends WorkerHost
 {
     constructor(
-        private readonly emailService:
-            EmailService,
+        private readonly emailService: EmailService,
     ) {
         super();
     }

@@ -18,7 +18,6 @@ export class UserService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly tenantRepository: TenantRepository,
-
         private readonly outboxService: OutboxService,
         private readonly jobsService: JobsService,
     ) {}

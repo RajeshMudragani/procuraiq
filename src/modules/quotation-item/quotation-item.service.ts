@@ -5,8 +5,7 @@ import { QuotationItemRepository } from './quotation-item.repository';
 export class QuotationItemService {
 
     constructor(
-        private readonly repository:
-            QuotationItemRepository,
+        private readonly repository: QuotationItemRepository,
     ) {}
 
     createMany(

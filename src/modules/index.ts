@@ -27,37 +27,42 @@ import { ApprovalModule } from './approval/approval.module';
 
 @Module({
     imports: [
+        // Core Modules
         HealthModule,
         RateLimitModule,
-        AuthModule,
-        TenantModule,
-        UserModule,
-        RoleModule,
-        PermissionModule,
-        UserRoleModule,
-        RolePermissionModule,
         RbacModule,
 
-        RfqModule,
-        RfqSupplierModule,
-        RfqItemModule,
-        SupplierModule,
+        // Security Modules
+        AuthModule,
+        PermissionModule,
+        RoleModule,
+        RolePermissionModule,
+        TenantModule,
+        UserModule,
+        UserRoleModule,
 
-        EvaluationModule,
-        EvaluationItemModule,
+        // Business Modules
+        ApprovalModule,
 
-        AwardModule,
         AwardItemModule,
-
-        PurchaseOrderModule,
-        PurchaseOrderItemModule,
-
-        QuotationModule,
-        QuotationItemModule,
+        AwardModule,
 
         DashboardModule,
 
-        ApprovalModule,
+        EvaluationItemModule,
+        EvaluationModule,
+
+        PurchaseOrderItemModule,
+        PurchaseOrderModule,
+
+        QuotationItemModule,
+        QuotationModule,
+
+        RfqItemModule,
+        RfqModule,
+        RfqSupplierModule,
+
+        SupplierModule,
     ],
 })
 

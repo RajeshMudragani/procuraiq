@@ -22,8 +22,7 @@ import { RfqSupplierService } from './rfq-supplier.service';
 export class RfqSupplierController {
 
     constructor(
-        private readonly service:
-            RfqSupplierService,
+        private readonly service: RfqSupplierService,
     ) {}
 
     @Post()

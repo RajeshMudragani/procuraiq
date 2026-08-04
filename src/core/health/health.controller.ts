@@ -5,8 +5,7 @@ import { NotFoundException } from '../../core/exceptions/not-found.exception';
 @Controller('health')
 export class HealthController {
     constructor(
-        private readonly logger:
-        LoggerService,
+        private readonly logger: LoggerService,
     ) {}
 
     @Get()

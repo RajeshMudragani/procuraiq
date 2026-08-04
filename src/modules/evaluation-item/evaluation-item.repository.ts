@@ -5,8 +5,7 @@ import { PrismaService } from '../../core/database/prisma.service';
 export class EvaluationItemRepository {
 
     constructor(
-        private readonly prisma:
-            PrismaService,
+        private readonly prisma: PrismaService,
     ) {}
 
     createMany(

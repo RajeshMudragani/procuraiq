@@ -12,8 +12,7 @@ from './rfq-item.repository';
 @Injectable()
 export class RfqItemService {
     constructor(
-        private readonly repository:
-            RfqItemRepository,
+        private readonly repository: RfqItemRepository,
     ) {}
 
     createMany(

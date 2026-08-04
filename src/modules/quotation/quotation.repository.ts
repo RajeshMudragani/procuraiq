@@ -5,8 +5,7 @@ import { PrismaService } from '../../core/database/prisma.service';
 export class QuotationRepository {
 
     constructor(
-        private readonly prisma:
-            PrismaService,
+        private readonly prisma: PrismaService,
     ) {}
 
     create(

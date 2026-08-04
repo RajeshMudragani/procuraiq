@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-
 import { PrismaService } from '../../core/database/prisma.service';
+import { ApprovalEntityType, ApprovalStatus } from '@prisma/client';
+import { RfqService } from '../rfq/rfq.service';
 
 @Injectable()
 export class ApprovalRepository {
@@ -62,6 +63,19 @@ export class ApprovalRepository {
             },
 
             data,
+        });
+    }
+
+    findApprovedByEntity(
+        entityType: ApprovalEntityType,
+        entityId: string,
+    ) {
+        return this.prisma.approval.findFirst({
+            where: {
+                entityType,
+                entityId,
+                status: ApprovalStatus.APPROVED,
+            },
         });
     }
 }

@@ -14,11 +14,8 @@ import { RfqSupplierRepository } from './rfq-supplier.repository';
 export class RfqSupplierService {
 
     constructor(
-        private readonly repository:
-            RfqSupplierRepository,
-
-        private readonly eventsService:
-            EventsService,
+        private readonly repository: RfqSupplierRepository,
+        private readonly eventsService: EventsService,
     ) {}
 
     async create(

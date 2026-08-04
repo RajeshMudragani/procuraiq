@@ -41,7 +41,10 @@ export class TenantService {
         return tenant;
     }
 
-    async getTenants( page = 1, limit = 10 ) {
+    async getTenants(
+        page = 1,
+        limit = 10
+    ) {
         return this.tenantRepository.findAll({
             page,
             limit,

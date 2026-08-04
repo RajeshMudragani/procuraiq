@@ -9,8 +9,7 @@ import { PrismaService } from '../../core/database/prisma.service';
 export class RfqSupplierRepository {
 
     constructor(
-        private readonly prisma:
-            PrismaService,
+        private readonly prisma: PrismaService,
     ) {}
 
     create(

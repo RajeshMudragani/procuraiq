@@ -5,8 +5,7 @@ import { EvaluationItemRepository } from './evaluation-item.repository';
 export class EvaluationItemService {
 
     constructor(
-        private readonly repository:
-            EvaluationItemRepository,
+        private readonly repository: EvaluationItemRepository,
     ) {}
 
     createMany(

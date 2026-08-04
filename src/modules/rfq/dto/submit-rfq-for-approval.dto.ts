@@ -1,6 +1,5 @@
 import {
     IsArray,
-    IsEnum,
     IsInt,
     IsString,
     ValidateNested,
@@ -8,52 +7,36 @@ import {
 
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { ApprovalEntityType } from '@prisma/client';
 
 export class ApprovalStepDto {
 
     @ApiProperty({
-        description: 'Approval step sequence number',
         example: 1,
+        description: 'Approval sequence',
     })
     @IsInt()
     stepNumber!: number;
 
     @ApiProperty({
-        description: 'User responsible for approving this step',
         example: 'manager-001',
+        description: 'Approver identifier',
     })
     @IsString()
     approverId!: string;
 }
 
-export class CreateApprovalDto {
-
-    @ApiProperty({
-        enum: ApprovalEntityType,
-        example: ApprovalEntityType.RFQ,
-        description: 'Business entity requiring approval',
-    })
-    @IsEnum(ApprovalEntityType)
-    entityType!: ApprovalEntityType;
-
-    @ApiProperty({
-        example: '9feaf695-1b63-43d7-88dc-07335fdc5698',
-        description: 'Target entity identifier',
-    })
-    @IsString()
-    entityId!: string;
+export class SubmitRfqForApprovalDto {
 
     @ApiProperty({
         example: 'Rajesh Mudragani',
-        description: 'User requesting approval',
+        description: 'User submitting RFQ for approval',
     })
     @IsString()
     requestedBy!: string;
 
     @ApiProperty({
         type: [ApprovalStepDto],
-        description: 'Sequential approval steps',
+        description: 'Sequential approval workflow',
         example: [
             {
                 stepNumber: 1,

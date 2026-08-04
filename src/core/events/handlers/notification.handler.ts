@@ -5,8 +5,7 @@ import { NotificationTemplateFactory } from '../../../modules/notification/templ
 @Injectable()
 export class NotificationHandler {
     constructor(
-        private readonly notificationService:
-            NotificationService,
+        private readonly notificationService: NotificationService,
     ) {}
 
     async handle(

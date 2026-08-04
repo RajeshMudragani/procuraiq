@@ -6,8 +6,7 @@ import { PrismaService } from '../../core/database/prisma.service';
 export class SupplierRepository {
 
     constructor(
-        private readonly prisma:
-            PrismaService,
+        private readonly prisma: PrismaService,
     ) {}
 
     create(

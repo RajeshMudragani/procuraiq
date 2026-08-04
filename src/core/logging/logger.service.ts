@@ -6,8 +6,7 @@ import { RequestContextService } from './request-context.service';
 export class LoggerService {
     constructor(
         private readonly logger: PinoLogger,
-        private readonly contextService:
-        RequestContextService,
+        private readonly contextService: RequestContextService,
     ) {}
 
     info(
