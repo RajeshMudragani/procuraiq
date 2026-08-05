@@ -32,14 +32,9 @@ model AuditLog {
   createdAt DateTime @default(now())
 
   @@index([tenantId])
-
   @@index([userId])
-
   @@index([entityType])
-
   @@index([entityId])
-
   @@index([entityType, entityId])
-
   @@map("audit_logs")
 }

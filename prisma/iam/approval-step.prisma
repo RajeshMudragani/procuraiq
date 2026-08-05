@@ -16,6 +16,5 @@ model ApprovalStep {
   approval Approval @relation(fields: [approvalId], references: [id], onDelete: Cascade)
 
   @@index([approvalId])
-
   @@map("approval_steps")
 }

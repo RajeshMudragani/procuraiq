@@ -1,0 +1,24 @@
+model VendorContact {
+  id String @id @default(uuid())
+
+  vendorId String
+
+  name String
+
+  email String?
+
+  phone String?
+
+  designation String?
+
+  isPrimary Boolean @default(false)
+
+  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([vendorId])
+  @@map("vendor_contacts")
+}

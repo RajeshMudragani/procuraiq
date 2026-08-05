@@ -31,6 +31,5 @@ model Approval {
   steps ApprovalStep[]
 
   @@index([entityType, entityId])
-
   @@map("approvals")
 }

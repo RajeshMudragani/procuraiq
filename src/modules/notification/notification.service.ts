@@ -6,7 +6,7 @@ import { NotificationRepository } from './notification.repository';
 import { EmailQueueService } from '../email/queue/email.queue.service';
 import { NotificationChannel } from './enums/notification-channel.enum';
 import { EmailTemplateFactory } from '../email/factories/email-template.factory';
-import { NotificationPreferenceRepository } from '../notificatio-preference/notification-preference.repository';
+import { NotificationPreferenceRepository } from '../notification-preference/notification-preference.repository';
 
 @Injectable()
 export class NotificationService {

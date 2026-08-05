@@ -1,0 +1,59 @@
+enum VendorStatus {
+  DRAFT
+  PENDING_APPROVAL
+  ACTIVE
+  INACTIVE
+  BLACKLISTED
+}
+
+enum VendorType {
+  MANUFACTURER
+  DISTRIBUTOR
+  SERVICE_PROVIDER
+  CONTRACTOR
+}
+
+model Vendor {
+  id String @id @default(uuid())
+
+  tenantId String
+
+  vendorCode String @unique
+
+  name String
+
+  email String?
+
+  phone String?
+
+  website String?
+
+  taxNumber String?
+
+  address String?
+
+  city String?
+
+  state String?
+
+  country String?
+
+  postalCode String?
+
+  status VendorStatus @default(DRAFT)
+
+  type VendorType?
+
+  notes String?
+
+  contacts VendorContact[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([vendorCode])
+  @@index([status])
+  @@map("vendors")
+}
