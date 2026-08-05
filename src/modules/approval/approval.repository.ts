@@ -18,6 +18,26 @@ export class ApprovalRepository {
         });
     }
 
+    async findAll(
+        status?: ApprovalStatus,
+    ) {
+        return this.prisma.approval.findMany({
+            where: status
+                ? {
+                    status,
+                }
+                : undefined,
+
+            include: {
+                steps: true,
+            },
+
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+    }
+
     findById(
         id: string,
     ) {

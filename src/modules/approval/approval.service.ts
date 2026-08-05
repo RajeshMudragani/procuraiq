@@ -14,6 +14,9 @@ import { ApproveDto } from './dto/approve.dto';
 import { RejectDto } from './dto/reject.dto';
 import { ApprovalRegistryService } from './approval-registry.service';
 import { AuditService } from '../../core/audit/audit.service';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationChannel } from '../notification/enums/notification-channel.enum';
+import { NotificationType } from '../notification/enums/notification-type.enum';
 
 @Injectable()
 export class ApprovalService {
@@ -21,7 +24,12 @@ export class ApprovalService {
         private readonly repository: ApprovalRepository,
         private readonly registry: ApprovalRegistryService,
         private readonly auditService: AuditService,
+        private readonly notificationService: NotificationService,
     ) {}
+
+    async findAll(status?: ApprovalStatus,) {
+        return this.repository.findAll(status);
+    }
 
     async findById(
         id: string,
@@ -101,12 +109,9 @@ export class ApprovalService {
         await this.repository.updateStep(
             currentStep.id,
             {
-                status:
-                    ApprovalStatus.APPROVED,
-                comments:
-                    dto.comments,
-                actionAt:
-                    new Date(),
+                status: ApprovalStatus.APPROVED,
+                comments: dto.comments,
+                actionAt: new Date(),
             },
         );
 
@@ -120,16 +125,14 @@ export class ApprovalService {
             await this.repository.update(
                 id,
                 {
-                    currentStep:
-                        approval.currentStep + 1,
+                    currentStep: approval.currentStep + 1,
                 },
             );
         } else {
             await this.repository.update(
                 id,
                 {
-                    status:
-                        ApprovalStatus.APPROVED,
+                    status: ApprovalStatus.APPROVED,
                 },
             );
 
@@ -157,6 +160,21 @@ export class ApprovalService {
             metadata: {
                 approverId: dto.approverId,
                 stepNumber: currentStep.stepNumber,
+                comments: dto.comments,
+            },
+        });
+
+        await this.notificationService.createSystemNotification({
+            tenantId: 'SYSTEM',
+            userId: dto.approverId,
+            type: NotificationType.APPROVAL_APPROVED,
+            channel: NotificationChannel.BOTH,
+            title: 'Approval Approved',
+            message: `Approval ${id} has been approved`,
+            metadata: {
+                email: "rajeshm9711@gmail.com",
+                approvalId: id,
+                approverId: dto.approverId,
                 comments: dto.comments,
             },
         });
@@ -245,6 +263,20 @@ export class ApprovalService {
             metadata: {
                 approverId: dto.approverId,
                 stepNumber: currentStep.stepNumber,
+                comments: dto.comments,
+            },
+        });
+
+        await this.notificationService.createSystemNotification({
+            tenantId: 'SYSTEM',
+            userId: dto.approverId,
+            type: NotificationType.APPROVAL_REJECTED,
+            channel: NotificationChannel.IN_APP,
+            title: 'Approval Rejected',
+            message: `Approval ${id} has been rejected`,
+            metadata: {
+                approvalId: id,
+                approverId: dto.approverId,
                 comments: dto.comments,
             },
         });

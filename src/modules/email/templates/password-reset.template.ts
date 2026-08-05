@@ -1,9 +1,9 @@
-import { EmailTemplateResult } from './email-template.interface';
+import { EmailTemplate } from './email-template.interface';
 
 export class PasswordResetTemplate {
     static build(
         resetLink: string,
-    ): EmailTemplateResult {
+    ): EmailTemplate {
         return {
             subject: 'Reset Your Password',
 

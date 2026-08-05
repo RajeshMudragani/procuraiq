@@ -2,8 +2,9 @@ import {
     Processor,
     WorkerHost,
 } from '@nestjs/bullmq';
+
 import { Job } from 'bullmq';
-import { EmailService } from '../email/email.service';
+import { EmailService } from '../smtp/email.service';
 import { EMAIL_QUEUE } from './email.constants';
 
 @Processor(

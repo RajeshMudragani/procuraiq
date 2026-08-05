@@ -1,10 +1,10 @@
-import { EmailTemplateResult } from './email-template.interface';
+import { EmailTemplate } from './email-template.interface';
 
 export class ContractExpiringTemplate {
     static build(
         contractName: string,
         expiryDate: string,
-    ): EmailTemplateResult {
+    ): EmailTemplate {
         return {
             subject: `Contract Expiring Soon`,
 

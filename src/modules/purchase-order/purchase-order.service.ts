@@ -69,9 +69,6 @@ export class PurchaseOrderService {
             0,
         );
 
-        console.log(
-            'PO Total Amount:', totalAmount,
-        );
         await this.repository.update(
             po.id,
             {

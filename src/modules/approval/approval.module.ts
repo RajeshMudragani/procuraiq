@@ -13,6 +13,7 @@ import { AwardApprovalHandler } from './handlers/award-approval.handler';
 import { PurchaseOrderApprovalHandler } from './handlers/purchase-order-approval.handler';
 import { ApprovalSubmissionService } from './approval-submission.service';
 import { AuditModule } from '../../core/audit/audit.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { AuditModule } from '../../core/audit/audit.module';
         forwardRef(() => PurchaseOrderModule),
 
         AuditModule,
+        NotificationModule,
     ],
 
     controllers: [

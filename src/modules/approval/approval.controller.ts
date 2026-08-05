@@ -4,6 +4,7 @@ import {
     Get,
     Param,
     Post,
+    Query,
 } from '@nestjs/common';
 
 import {
@@ -11,6 +12,7 @@ import {
     ApiParam,
     ApiResponse,
     ApiTags,
+    ApiQuery,
 } from '@nestjs/swagger';
 
 import { ApprovalService } from './approval.service';
@@ -18,6 +20,8 @@ import { ApprovalService } from './approval.service';
 import { CreateApprovalDto } from './dto/create-approval.dto';
 import { ApproveDto } from './dto/approve.dto';
 import { RejectDto } from './dto/reject.dto';
+import { ApprovalSubmissionService } from './approval-submission.service';
+import { ApprovalStatus } from '@prisma/client';
 
 @ApiTags('Approval')
 @Controller('approvals')
@@ -25,6 +29,7 @@ export class ApprovalController {
 
     constructor(
         private readonly service: ApprovalService,
+        private readonly approvalSubmissionService: ApprovalSubmissionService,
     ) {}
 
     @Post()
@@ -45,9 +50,42 @@ export class ApprovalController {
         @Body()
         dto: CreateApprovalDto,
     ) {
-        return this.service.create(
+        return this.approvalSubmissionService.create(
             dto,
         );
+    }
+
+    @Get()
+    @ApiOperation({
+        summary: 'Get all approvals',
+        description:
+            'Retrieves all approval workflows including their steps.',
+    })
+    @ApiResponse({
+        status: 200,
+        description:
+            'Approvals retrieved successfully.',
+    })
+    @ApiResponse({
+        status: 200,
+        description:
+            'Approval retrieved successfully.',
+    })
+    @ApiResponse({
+        status: 404,
+        description:
+            'Approval not found.',
+    })
+    @ApiQuery({
+        name: 'status',
+        required: false,
+        enum: ApprovalStatus,
+    })
+    findAll(
+        @Query('status')
+        status?: ApprovalStatus
+    ) {
+        return this.service.findAll(status);
     }
 
     @Get(':id')
