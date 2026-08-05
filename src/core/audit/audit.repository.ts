@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-
 import {
-  AuditLog,
-  Prisma,
+    AuditLog,
+    Prisma,
 } from '@prisma/client';
 
 import { PrismaService } from '../database/prisma.service';
@@ -21,8 +20,23 @@ export class AuditRepository {
         });
     }
 
-    async findAll() {
+    async findAll(): Promise<AuditLog[]> {
         return this.prisma.auditLog.findMany({
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+    }
+
+    async findByEntity(
+        entityType: string,
+        entityId: string,
+    ): Promise<AuditLog[]> {
+        return this.prisma.auditLog.findMany({
+            where: {
+                entityType,
+                entityId,
+            },
             orderBy: {
                 createdAt: 'desc',
             },

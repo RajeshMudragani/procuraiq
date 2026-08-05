@@ -12,11 +12,14 @@ import { ApprovalRegistryService } from './approval-registry.service';
 import { AwardApprovalHandler } from './handlers/award-approval.handler';
 import { PurchaseOrderApprovalHandler } from './handlers/purchase-order-approval.handler';
 import { ApprovalSubmissionService } from './approval-submission.service';
+import { AuditModule } from '../../core/audit/audit.module';
 
 @Module({
     imports: [
         forwardRef(() => AwardModule),
         forwardRef(() => PurchaseOrderModule),
+
+        AuditModule,
     ],
 
     controllers: [

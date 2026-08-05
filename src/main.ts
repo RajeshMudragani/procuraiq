@@ -11,7 +11,11 @@ import { ConfigService } from '@nestjs/config';
 import { VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ResponseInterceptor } from './core/interceptors/response.interceptor';
-import { ValidationPipe } from '@nestjs/common';
+import {
+    ValidationPipe,
+    ValidationError,
+} from '@nestjs/common';
+import { ValidationException } from './core/exceptions/validation.exception';
 
 async function bootstrap() {
 
@@ -74,6 +78,29 @@ async function bootstrap() {
             whitelist: true,
             transform: true,
             forbidNonWhitelisted: true,
+
+            exceptionFactory: (
+                errors: ValidationError[],
+            ) => {
+
+                const details = errors.flatMap(
+                    error => {
+
+                        const messages = Object.values(error.constraints ?? {});
+
+                        return messages.map(
+                            message => ({
+                                field: error.property,
+                                message,
+                            }),
+                        );
+                    },
+                );
+
+                return new ValidationException(
+                    details,
+                );
+            },
         }),
     );
 

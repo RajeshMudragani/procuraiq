@@ -4,77 +4,24 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 
-import { ApprovalEntityType, ApprovalStatus } from '@prisma/client';
+import {
+    ApprovalStatus,
+    AuditAction,
+} from '@prisma/client';
+
 import { ApprovalRepository } from './approval.repository';
-import { CreateApprovalDto } from './dto/create-approval.dto';
 import { ApproveDto } from './dto/approve.dto';
 import { RejectDto } from './dto/reject.dto';
 import { ApprovalRegistryService } from './approval-registry.service';
+import { AuditService } from '../../core/audit/audit.service';
+
 @Injectable()
 export class ApprovalService {
-
     constructor(
         private readonly repository: ApprovalRepository,
         private readonly registry: ApprovalRegistryService,
+        private readonly auditService: AuditService,
     ) {}
-
-    async create(
-        dto: CreateApprovalDto,
-    ) {
-
-        const sortedSteps = [...dto.steps].sort(
-            ( a, b ) => a.stepNumber - b.stepNumber,
-        );
-
-        sortedSteps.forEach(
-            (
-                step,
-                index,
-            ) => {
-
-                if ( step.stepNumber !== index + 1 ) {
-                    throw new BadRequestException(
-                        'Step numbers must be sequential starting from 1',
-                    );
-                }
-            },
-        );
-
-        const approvers = dto.steps.map(
-            step => step.approverId,
-        );
-
-        if (
-            new Set(
-                approvers,
-            ).size !==
-            approvers.length
-        ) {
-            throw new BadRequestException(
-                'Duplicate approvers are not allowed',
-            );
-        }
-
-        const approval = await this.repository.create({
-                entityType: dto.entityType,
-                entityId: dto.entityId,
-                requestedBy: dto.requestedBy,
-            });
-
-        await this.repository.createSteps(
-            dto.steps.map(
-                step => ({
-                    approvalId: approval.id,
-                    stepNumber: step.stepNumber,
-                    approverId: step.approverId,
-                }),
-            ),
-        );
-
-        return this.findById(
-            approval.id,
-        );
-    }
 
     async findById(
         id: string,
@@ -170,7 +117,6 @@ export class ApprovalService {
         );
 
         if (nextStep) {
-
             await this.repository.update(
                 id,
                 {
@@ -178,9 +124,7 @@ export class ApprovalService {
                         approval.currentStep + 1,
                 },
             );
-        }
-        else {
-
+        } else {
             await this.repository.update(
                 id,
                 {
@@ -194,7 +138,30 @@ export class ApprovalService {
             );
         }
 
-        return this.findById(id);
+        const updatedApproval = await this.findById(id);
+
+        await this.auditService.log({
+            action: AuditAction.APPROVE,
+            entityType: 'Approval',
+            entityId: id,
+            userId: dto.approverId,
+            tenantId: approval.id,
+            oldData: {
+                status: approval.status,
+                currentStep: approval.currentStep,
+            },
+            newData: {
+                status: updatedApproval.status,
+                currentStep: updatedApproval.currentStep,
+            },
+            metadata: {
+                approverId: dto.approverId,
+                stepNumber: currentStep.stepNumber,
+                comments: dto.comments,
+            },
+        });
+
+        return updatedApproval;
     }
 
     async reject(
@@ -259,8 +226,29 @@ export class ApprovalService {
             },
         );
 
-        return this.findById(
-            id,
-        );
+        const updatedApproval = await this.findById(id);
+
+        await this.auditService.log({
+            action:  AuditAction.REJECT,
+            entityType: 'Approval',
+            entityId: id,
+            userId: dto.approverId,
+            tenantId: approval.id,
+            oldData: {
+                status: approval.status,
+                currentStep: approval.currentStep,
+            },
+            newData: {
+                status: updatedApproval.status,
+                currentStep: updatedApproval.currentStep,
+            },
+            metadata: {
+                approverId: dto.approverId,
+                stepNumber: currentStep.stepNumber,
+                comments: dto.comments,
+            },
+        });
+
+        return updatedApproval;
     }
 }

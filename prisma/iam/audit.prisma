@@ -1,23 +1,45 @@
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  APPROVE
+  REJECT
+  PUBLISH
+  AWARD
+  ISSUE
+  CANCEL
+}
+
 model AuditLog {
   id String @id @default(uuid())
 
   tenantId String?
-  userId   String?
 
-  entityName String
-  entityId   String?
+  userId String?
 
-  action String
+  entityType String
+
+  entityId String?
+
+  action AuditAction
 
   oldData Json?
+
   newData Json?
+
+  metadata Json?
 
   createdAt DateTime @default(now())
 
   @@index([tenantId])
+
   @@index([userId])
-  @@index([entityName])
+
+  @@index([entityType])
+
   @@index([entityId])
-  @@index([entityName, entityId])
+
+  @@index([entityType, entityId])
+
   @@map("audit_logs")
 }
