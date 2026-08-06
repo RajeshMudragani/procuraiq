@@ -1,8 +1,6 @@
-export const securityConfig = {
+export const getSecurityConfig = () => ({
     cors: {
-        origin: [
-            'http://localhost:3001',
-        ],
+        origin: process.env.CORS_ORIGINS,
 
         credentials: true,
     },
@@ -11,4 +9,4 @@ export const securityConfig = {
         ttl: 60_000,
         limit: 100,
     },
-};
+});

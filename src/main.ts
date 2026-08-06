@@ -6,7 +6,7 @@ import { RequestContextService } from './core/logging/request-context.service';
 import helmet from 'helmet';
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
-import { securityConfig } from './core/config/security.config';
+import { getSecurityConfig } from './core/config/security.config';
 import { ConfigService } from '@nestjs/config';
 import { VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -65,12 +65,11 @@ async function bootstrap() {
 
     const requestContextService = app.get(RequestContextService);
 
-    app.enableCors({
-        origin:
-            securityConfig.cors.origin,
+    const securityConfig = getSecurityConfig();
 
-        credentials:
-            securityConfig.cors.credentials,
+    app.enableCors({
+        origin: securityConfig.cors.origin,
+        credentials: securityConfig.cors.credentials,
     });
 
     app.useGlobalPipes(

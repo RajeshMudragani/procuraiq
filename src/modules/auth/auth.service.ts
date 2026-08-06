@@ -57,7 +57,6 @@ export class AuthService {
     async login(dto: LoginDto) {
         const user = await this.prisma.user.findFirst({
             where: {
-                tenantId: dto.tenantId,
                 email: dto.email,
                 isDeleted: false,
             },
@@ -84,7 +83,6 @@ export class AuthService {
 
         const payload = {
             sub: user.id,
-            tenantId: user.tenantId,
             email: user.email,
         };
 
@@ -97,8 +95,7 @@ export class AuthService {
             );
 
 
-        const refreshTokenHash =
-        await bcrypt.hash(
+        const refreshTokenHash = await bcrypt.hash(
             refreshToken,
             12,
         );

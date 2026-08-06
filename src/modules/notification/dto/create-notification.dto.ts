@@ -10,7 +10,7 @@ import { NotificationType } from '../enums/notification-type.enum';
 
 export class CreateNotificationDto {
     @ApiProperty({
-        example: 'e356b2f4-c726-4835-9e2a-db359fb6ec26',
+        example: 'bc7f4ec4-d4be-4469-9cf6-c0eea9a61eac',
         description: 'Tenant ID',
     })
     @IsString()

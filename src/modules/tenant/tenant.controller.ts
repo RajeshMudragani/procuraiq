@@ -100,7 +100,7 @@ export class TenantController {
         description:
             'Tenant identifier',
         example:
-            'e356b2f4-c726-4835-9e2a-db359fb6ec26',
+            'bc7f4ec4-d4be-4469-9cf6-c0eea9a61eac',
     })
     @ApiResponse({
         status: 200,
@@ -132,7 +132,7 @@ export class TenantController {
         description:
             'Tenant identifier',
         example:
-            'e356b2f4-c726-4835-9e2a-db359fb6ec26',
+            'bc7f4ec4-d4be-4469-9cf6-c0eea9a61eac',
     })
     @ApiResponse({
         status: 200,
@@ -168,7 +168,7 @@ export class TenantController {
         description:
             'Tenant identifier',
         example:
-            'e356b2f4-c726-4835-9e2a-db359fb6ec26',
+            'bc7f4ec4-d4be-4469-9cf6-c0eea9a61eac',
     })
     @ApiResponse({
         status: 200,
